@@ -9,9 +9,8 @@ if (envVersion === "release" && env !== "production") {
 export default {
   env,
   baseUrl: {
-    // Prefer LAN IP for WeChat DevTools / real-device debugging.
-    // If your IP changes, update this value.
-    develop: "http://192.168.1.102:3000",
+    // WeChat DevTools on local machine: use localhost to avoid LAN proxy 502.
+    develop: "http://127.0.0.1:3000",
     production: "http://api.xxx.com",
   },
 }

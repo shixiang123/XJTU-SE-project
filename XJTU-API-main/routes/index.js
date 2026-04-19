@@ -3,7 +3,7 @@ const router = new Router()
 
 const loginController = require("../controllers/login")
 router.get("/", (ctx, next) => {
-  ctx.result = "hello BaiyunAPI"
+  ctx.result = "hello XJTU API"
   return next()
 })
 router.get("/login-init", loginController.loginInit)

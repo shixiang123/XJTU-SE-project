@@ -52,7 +52,8 @@ const createRequest = (axiosOptions, options = {}) => {
         if (responseType === "arraybuffer") {
           res.data = iconv.decode(res.data, schoolConfig.chatset || "utf-8")
         }
-        const diyInterceptor = responseInterceptors[process.env.SCHOOL_CODE]
+        const schoolCode = process.env.XJTU_SCHOOL_CODE || process.env.SCHOOL_CODE
+        const diyInterceptor = responseInterceptors[schoolCode]
         if (diyInterceptor && options.notInterceptor !== true) {
           return diyInterceptor(res)
         }

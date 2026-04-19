@@ -1,7 +1,7 @@
 {
-  "name": "baiyun-api",
+  "name": "xjtu-api",
   "version": "1.0.0",
-  "description": "广东白云学院教务系统api，非官方api",
+  "description": "XJTU academic affairs API (unofficial, for learning only)",
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./bin/www",
@@ -12,7 +12,7 @@
     "stop": "pm2 stop ecosystem.config.js"
   },
   "keywords": [],
-  "author": "danbaixi",
+  "author": "xjtuhub-team",
   "license": "ISC",
   "dependencies": {
     "@koa/router": "^12.0.0",

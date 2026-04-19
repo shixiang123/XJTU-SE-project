@@ -1,4 +1,4 @@
-const CACHE_KEY = "__UAAS_DDL_LIST__"
+const CACHE_KEY = "__XJTU_DDL_LIST__"
 
 function getDefaultList() {
   return [
