@@ -1,132 +1,94 @@
 # XJTUhub
 
-XJTUhub 是一个面向西安交通大学场景的微信小程序 + Node.js 后端项目，核心目标是把教务与学习常用信息整合到一个统一入口中。
+XJTUhub 是一个面向西安交通大学学习场景的校园便捷平台项目，包含：
 
-当前版本已完成：
-- 账号登录与会话鉴权
-- 课表查询、成绩查询（含原始小分明细）
-- DDL 抓取与勾选管理
-- 考勤抓取与分维度展示（本周/本月/本学期）
-- 课程资料共享（上传/列表/下载/删除）
-- MongoDB 数据源接入（支持 JSON 与 Mongo 双模式）
+- `XJTUhub-main`：微信小程序前端
+- `XJTU-API-main`：Node.js 后端与爬虫服务
+- 根目录学术主页：静态网站（`index.html + static/`）
 
-## 项目结构
+项目目标是把高频校园学习任务整合到统一入口，覆盖课表、成绩、考勤、待办与资料共享。
+
+## 项目主页
+
+- 仓库地址：[XJTU-SE-project](https://github.com/shixiang123/XJTU-SE-project)
+- `final` 分支主页源文件：根目录 `index.html`
+- 主页特性：
+  - 中英文切换
+  - 顶部 Demo 视频展示
+  - 功能截图区（课表 / 成绩 / 考勤 / 待办事项 / 共享文件）
+  - 系统贡献点说明（含团队分工、AI+人工协作流程）
+  - 访客统计
+
+## 功能概览
+
+### 已实现功能
+
+1. 成绩查询与均分计算
+- 支持按学期查看成绩。
+- 支持成绩明细展示与均分分析。
+
+2. 考勤查询与预警
+- 统计正常/迟到/缺勤。
+- 按风险强度分级提示缺勤风险。
+
+3. 课表与待办导出
+- 支持课表信息查看与导出。
+- 支持学校系统待办任务同步与导出。
+
+4. 共享资料数据库
+- 支持学习资料上传、检索、下载与复用。
+
+### 规划功能
+
+1. 后端迁移到微信云平台，准备线上发布。
+2. 课表接入地图 API，实现教室导航。
+3. 建设论坛发帖与互动能力，支持学生协作与师生科研/竞赛对接。
+
+## 系统贡献点（开发方式）
+
+本项目采用 **vibe-coding + 人类审查** 协作模式，不是“完全自主 AI 开发”。
+
+关键实践：
+
+1. 明确分工并协同联调
+- Zhiyuan Jiang：项目统筹、baseline 调研、AI skills 调研与流程设计、功能测试统筹。
+- Yuexin Chen / Yuyang Xie：前端页面与交互开发，结合 UI 设计经验完成小程序落地。
+- Xiang Shi：后端爬虫与数据同步链路。
+- Yifan Shan：数据库与资源数据层。
+
+2. 先需求分析，再分派 Agent
+- 在分派任务前完成需求拆解、技术选型、成本评估。
+- 通过详细说明文档和长期人工审核，降低 AI 幻觉风险。
+
+3. 成本与质量双控制
+- 项目成本控制在 100 RMB 以内（低于预期 200 RMB）。
+- 各功能上线前经过团队联合测试与检查。
+
+## 仓库结构
 
 ```text
-XJTUhub-main/     微信小程序前端
-XJTU-API-main/    Node.js 后端 API + 爬虫
-README.md         项目总说明（本文件）
+XJTU-SE-project-main/
+├── index.html                 # 学术主页（静态）
+├── static/                    # 学术主页资源
+├── XJTUhub-main/              # 微信小程序前端
+├── XJTU-API-main/             # Node.js 后端 + 爬虫
+└── README.md
 ```
 
-## 核心功能
+## 本地运行
 
-1. 登录与鉴权
-- 前端输入学号和密码，调用 `POST /login` 获取本地 token。
-- token 格式为 `xjtu-<stuId>-...`，后端通过请求头 `token` 完成业务鉴权与用户隔离。
+### A. 学术主页（静态站）
 
-2. 课表与成绩
-- 支持分别触发课表爬虫、成绩爬虫，避免耦合。
-- 成绩包含有效成绩与原始分项（平时/期中/期末/综合等），支持按学分加权均分计算。
+不需要 build，直接本地起静态服务：
 
-3. DDL
-- 可触发 LMS（SYXT）DDL 抓取。
-- 支持前端勾选完成状态。
-- 在 Mongo 模式下，DDL 勾选状态可持久化。
+```bash
+cd /path/to/XJTU-SE-project-main
+python3 -m http.server 8080
+```
 
-4. 考勤
-- 支持触发考勤系统（BKKQ）抓取。
-- 展示本周/本月/本学期分类数据与汇总指标。
+浏览器打开：`http://127.0.0.1:8080`
 
-5. 资料共享
-- 支持文件上传到后端公共目录、分页列表、下载。
-- 仅发布者可删除自己上传的文件。
-- 支持常见课件/压缩包/文档格式。
-
-## Pipeline
-
-### 1) 数据源模式
-
-后端通过环境变量 `DATA_SOURCE` 控制数据源：
-- `json`：读取本地 `output/*.json` 文件（默认）
-- `mongo`：优先读写 MongoDB（不可用时回退到本地）
-
-关键实现位于：
-- `XJTU-API-main/db/mongo.js`
-- `XJTU-API-main/services/crawlerDataService.js`
-
-### 2) Mongo 连接与索引初始化
-
-后端启动时会尝试连接 Mongo，并自动创建索引：
-- `crawler_data`（课表/成绩聚合数据）
-- `ddls`（DDL 列表与勾选状态）
-- `resources`（资料元信息索引预留）
-
-对应代码：
-- `XJTU-API-main/app.js`
-- `XJTU-API-main/repositories/*.js`
-
-### 3) 课表/成绩爬取与入库链路
-
-链路如下：
-1. 前端点击刷新（课表页或成绩页）
-2. 调用：
-   - `POST /crawl/xjtu/course/trigger`（仅课表）
-   - `POST /crawl/xjtu/score/trigger`（仅成绩）
-3. 后端子进程运行 `scripts/xjtu-ehall-crawler.js`
-4. 爬虫输出到 `output/xjtu-ehall.json`
-5. 后端在任务成功后调用 `syncLatestCrawlerOutputToMongo(stuId)`，将映射后的 `courseList/scoreList/rawScoreList` 写入 Mongo
-6. 前端轮询 `GET /crawl/xjtu/status`，任务结束后请求 `GET /courses`、`GET /scores`、`GET /raw-scores`
-
-说明：
-- Mongo 模式下，`/courses` 和 `/scores` 会按 token 中 `stuId` 读取各自数据。
-- JSON 模式下，读取本地 output 文件映射结果。
-
-### 4) DDL 链路
-
-1. 前端触发 `POST /crawl/syxt/ddl/trigger`
-2. 爬虫脚本 `scripts/xjtu-syxt-ddl-crawler.js` 生成 `output/xjtu-syxt-ddl-<stuId>.json`
-3. `GET /ddl` 优先读取 Mongo（若启用）；没有则读 output 文件并可回写 Mongo
-4. `PATCH /ddl/:id` 更新 done 状态（Mongo 模式持久化，否则内存态）
-
-### 5) 考勤链路
-
-1. 前端触发 `POST /crawl/xjtu/attendance/trigger`
-2. 爬虫脚本 `scripts/xjtu-bkkq-crawler.js` 生成 `output/xjtu-bkkq-attendance-<stuId>.json`
-3. `GET /attendance` 返回标准化后的：
-   - `list`
-   - `byTab`（week/month/term）
-   - `summary`
-   - `rawTables`
-
-### 6) 资料共享链路
-
-1. 前端 `wx.uploadFile` 到 `POST /resources/upload`
-2. 后端保存到 `XJTU-API-main/public/materials/`
-3. 元信息写入 `.meta.json`（显示名、上传者等）
-4. `GET /resources` 分页返回列表
-5. `DELETE /resources/:id` 仅允许上传者删除
-6. 通过 `/materials/*` 下载（后端设置附件下载头）
-
-## 项目特点
-
-1. 面向单校场景深度适配
-- 围绕 XJTU 的 ehall、LMS、BKKQ 业务流程做了专门爬取适配。
-
-2. 模块化爬取触发
-- 课表和成绩已拆分为独立触发接口，刷新互不影响，链路更稳定。
-
-3. 数据源可切换
-- 支持 JSON 与 Mongo 双模式；Mongo 不可用时可平滑回退，保证基本可用性。
-
-4. 用户维度数据隔离
-- token 中携带 `stuId`，课表/成绩/DDL/考勤按用户维度读取对应数据快照。
-
-5. 前后端协同加载体验
-- 前端有本地缓存、刷新状态与轮询机制；爬取过程中可持续显示加载状态。
-
-## 快速启动
-
-### 1) 启动后端
+### B. 后端服务（XJTU-API-main）
 
 ```bash
 cd XJTU-API-main
@@ -134,54 +96,33 @@ npm install
 npm start
 ```
 
-默认监听 `0.0.0.0:3000`。
+默认端口通常为 `3000`（以项目内实际配置为准）。
 
-### 2) （可选）启用 Mongo
+### C. 微信小程序（XJTUhub-main）
 
-在 `XJTU-API-main/.env` 配置：
+1. 使用微信开发者工具导入 `XJTUhub-main`。
+2. 构建 npm（如项目依赖需要）。
+3. 配置请求后端地址，联调后端接口。
 
-```env
-DATA_SOURCE=mongo
-MONGO_URI=mongodb://127.0.0.1:27017
-MONGO_DB_NAME=xjtuhub
-```
+## 部署说明（GitHub Pages）
 
-如需把现有 JSON 快照迁移到 Mongo：
+学术主页属于静态页面，通常不需要构建流水线。
 
-```bash
-npm run migrate:mongo
-```
+1. 将主页改动推送到目标分支（例如 `final`）。
+2. 在 GitHub 仓库 `Settings -> Pages` 选择：
+- Source: `Deploy from a branch`
+- Branch: `final`
+- Folder: `/ (root)`
+3. 等待 Pages 自动发布。
 
-### 3) 启动前端（微信开发者工具）
+默认地址通常为：
+`https://<owner>.github.io/<repo>/`
 
-1. 导入 `XJTUhub-main`
-2. 构建 npm
-3. 确认 `XJTUhub-main/config.js` 的后端地址可访问
-4. 真机调试时可设置：
-   - `wx.setStorageSync('lanBaseUrl', 'http://<你的局域网IP>:3000')`
-
-## 常用接口一览
-
-- `POST /login`
-- `GET /courses`
-- `GET /scores`
-- `GET /raw-scores`
-- `GET /attendance`
-- `GET /ddl`
-- `PATCH /ddl/:id`
-- `GET /resources`
-- `POST /resources/upload`
-- `DELETE /resources/:id`
-- `POST /crawl/xjtu/course/trigger`
-- `POST /crawl/xjtu/score/trigger`
-- `GET /crawl/xjtu/status`
-- `POST /crawl/xjtu/attendance/trigger`
-- `GET /crawl/xjtu/attendance/status`
-- `POST /crawl/syxt/ddl/trigger`
-- `GET /crawl/syxt/ddl/status`
+例如本仓库：
+`https://shixiang123.github.io/XJTU-SE-project/`
 
 ## 说明
 
-- 本项目为学习与个人项目用途，非学校官方系统。
-- 爬虫能力依赖目标网站页面结构，目标系统变更后需同步维护脚本。
-
+- 本项目为课程/学习用途，非学校官方系统。
+- 爬虫相关逻辑依赖目标站点页面结构，若目标系统变更需同步维护。
+- 仓库中若存在 `.DS_Store` 等系统文件，建议不要纳入版本管理。
