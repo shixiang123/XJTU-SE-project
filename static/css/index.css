@@ -1,6 +1,18 @@
 body {
   font-family: 'Noto Sans', sans-serif;
   color: #102025;
+  position: relative;
+  min-height: 100vh;
+}
+
+.xjtu-watermark {
+  position: fixed;
+  inset: 0;
+  background: url('../images-xjtu-logo.png') center 28% / 56% no-repeat;
+  opacity: 0.06;
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .publication-title,
@@ -8,6 +20,24 @@ body {
 .section-title,
 .hero .subtitle {
   font-family: 'Google Sans', sans-serif;
+}
+
+.hero-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.65rem;
+}
+
+.hero-logo {
+  width: min(420px, 92vw);
+  height: auto;
+  object-fit: contain;
+  border-radius: 0;
+  box-shadow: 0 12px 28px rgba(13, 43, 71, 0.2);
+}
+
+.hero-title-text {
+  margin: 0 !important;
 }
 
 .link-block a {
@@ -35,19 +65,48 @@ body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.9rem;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
 .teaser-grid video {
   width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
   border-radius: 12px;
   border: 1px solid #e6edf5;
   background: #000;
 }
 
-@media screen and (max-width: 768px) {
-  .teaser-grid {
-    grid-template-columns: 1fr;
-  }
+.screenshot-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.shot-card {
+  margin: 0;
+  border: 1px solid #e8edf5;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(15, 41, 68, 0.08);
+}
+
+.shot-card img {
+  width: 100%;
+  aspect-ratio: 9 / 19.5;
+  object-fit: cover;
+  display: block;
+}
+
+.shot-card figcaption {
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 0.45rem 0.4rem 0.52rem;
+  color: #324152;
 }
 
 .feature-card {
@@ -58,13 +117,22 @@ body {
   background: #fff;
 }
 
-.feature-card h3 {
+.feature-card h3,
+.feature-card h4 {
   font-weight: 700;
   margin-bottom: 0.45rem;
 }
 
 .feature-card ul {
   margin-left: 1rem;
+}
+
+.target-list {
+  margin-left: 1.1rem;
+}
+
+.target-list li {
+  margin-bottom: 0.5rem;
 }
 
 .pipeline {
@@ -76,7 +144,123 @@ body {
   background: #f7fafc;
 }
 
+.target-intro {
+  max-width: 860px;
+  margin: 0.2rem auto 0.6rem;
+  color: #23374d;
+  text-align: center;
+}
+
+.target-subtitle {
+  margin-top: 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #183b5b;
+}
+
+.target-feature {
+  position: relative;
+}
+
+.info-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #1d72b8;
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 22px;
+  text-align: center;
+  font-weight: 700;
+  cursor: help;
+  box-shadow: 0 4px 10px rgba(20, 64, 104, 0.25);
+}
+
+.info-badge::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: -8px;
+  right: 28px;
+  width: min(320px, 70vw);
+  padding: 0.62rem 0.7rem;
+  border-radius: 10px;
+  background: #0f2e49;
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 1.42;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 10;
+}
+
+.info-badge:hover::after,
+.info-badge:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.skill-illustration {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #e4ebf3;
+  margin: 0.38rem 0 0.52rem;
+}
+
+.contrib-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+}
+
+.contrib-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid #c5d8ea;
+  background: #f2f8ff;
+  color: #164c78;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 .footer-note {
   color: #4a4a4a;
   font-size: 0.95rem;
+}
+
+@media screen and (max-width: 768px) {
+  .hero-logo {
+    width: min(320px, 90vw);
+  }
+
+  .teaser-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .screenshot-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .xjtu-watermark {
+    background-size: 92%;
+    opacity: 0.05;
+  }
+
+  .info-badge::after {
+    right: 0;
+    top: 28px;
+    width: min(280px, 78vw);
+  }
 }

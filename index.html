@@ -2,13 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="XJTUhub: A campus learning assistant mini-program with real-time backend crawling for courses, scores, attendance and deadlines.">
-  <meta name="keywords" content="XJTU, WeChat Mini Program, Campus Assistant, Course Schedule, Score, Attendance, DDL">
+  <meta name="description" content="XJTUhub: A campus learning assistant mini-program with crawler-driven backend and detailed course/score/resource workflows.">
+  <meta name="keywords" content="XJTU, WeChat Mini Program, Campus Assistant, Course Schedule, Score, Attendance, DDL, Crawler">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>XJTUhub: Campus Learning Assistant for XJTU</title>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
-
   <link rel="stylesheet" href="./static/css/bulma.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
@@ -18,6 +17,7 @@
   <script src="./static/js/index.js"></script>
 </head>
 <body>
+<div class="xjtu-watermark" aria-hidden="true"></div>
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
@@ -29,10 +29,16 @@
   </div>
   <div class="navbar-menu">
     <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="#overview">Overview</a>
-      <a class="navbar-item" href="#features">Features</a>
-      <a class="navbar-item" href="#architecture">Architecture</a>
-      <a class="navbar-item" href="#implementation">Implementation</a>
+      <a class="navbar-item" href="#overview" data-i18n="nav.overview">Overview</a>
+      <a class="navbar-item" href="#contribution" data-i18n="nav.contribution">Contribution</a>
+      <a class="navbar-item" href="#frontend" data-i18n="nav.frontend">Frontend</a>
+      <a class="navbar-item" href="#backend" data-i18n="nav.backend">Backend</a>
+      <a class="navbar-item" href="#dataflow" data-i18n="nav.dataflow">Data Flow</a>
+      <a class="navbar-item" href="#api" data-i18n="nav.api">API</a>
+      <a class="navbar-item" href="#implementation" data-i18n="nav.implementation">Implementation</a>
+      <div class="navbar-item lang-switch-wrap">
+        <button id="lang-toggle" class="button is-small is-rounded is-info is-light">中文 / EN</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -42,17 +48,23 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">XJTUhub: Campus Learning Assistant for XJTU</h1>
-          <p class="subtitle is-5" style="margin-top: 0.8rem;">
+          <div class="hero-logo-wrap">
+            <img src="./static/images/logo1.png" alt="XJTUhub Project Logo" class="hero-logo">
+          </div>
+          <h1 class="title is-1 publication-title hero-title-text" data-i18n="hero.title">XJTUhub: Campus Learning Assistant for XJTU</h1>
+          <p class="subtitle is-5" style="margin-top: 0.8rem;" data-i18n="hero.subtitle">
             A WeChat Mini Program + Node.js backend system for schedule, score, attendance, resource browsing, and DDL support.
           </p>
 
           <div class="is-size-5 publication-authors" style="margin-top: 1rem;">
-            <span class="author-block">Zhiyuan Jiang,</span>
-            <span class="author-block">SE Project Team</span>
+            <span class="author-block"><a href="https://github.com/zhiyuanjiang04" target="_blank" data-i18n="author.zhiyuan">Zhiyuan Jiang</a>,</span>
+            <span class="author-block"><a href="https://github.com/shixiang123" target="_blank" data-i18n="author.xiang">Xiang Shi</a>,</span>
+            <span class="author-block"><a href="https://github.com/koi-kokoro" target="_blank" data-i18n="author.yuexin">Yuexin Chen</a>,</span>
+            <span class="author-block"><a href="https://github.com/ways0713" target="_blank" data-i18n="author.yifan">Yifan Shan</a>,</span>
+            <span class="author-block"><a href="https://github.com/Azar233" target="_blank" data-i18n="author.yuyang">Yuyang Xie</a></span>
           </div>
 
-          <div class="is-size-6" style="margin-top: 0.4rem; color: #5a5a5a;">
+          <div class="is-size-6" style="margin-top: 0.4rem; color: #5a5a5a;" data-i18n="hero.affiliation">
             Xi'an Jiaotong University · Software Engineering Project
           </div>
 
@@ -61,19 +73,19 @@
               <span class="link-block">
                 <a href="https://github.com/shixiang123/XJTU-SE-project" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fab fa-github"></i></span>
-                  <span>Project Repo</span>
+                  <span data-i18n="hero.repo">Project Repo</span>
                 </a>
               </span>
               <span class="link-block">
                 <a href="https://github.com/shixiang123/XJTU-SE-project/tree/final" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-code-branch"></i></span>
-                  <span>Final Branch</span>
+                  <span data-i18n="hero.branch">Final Branch</span>
                 </a>
               </span>
               <span class="link-block">
                 <a href="#implementation" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-sitemap"></i></span>
-                  <span>System Details</span>
+                  <span data-i18n="hero.details">System Details</span>
                 </a>
               </span>
             </div>
@@ -95,9 +107,37 @@
           <source src="./static/videos/demo2.mp4" type="video/mp4">
         </video>
       </div>
-      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;" data-i18n="overview.demoCaption">
         Top demos: mini-program workflow and integrated backend crawling pipeline.
       </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="feature-shots">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="shots.title">🖼️ Feature Screenshots</h2>
+    <div class="screenshot-row">
+      <figure class="shot-card">
+        <img src="./static/images/screenshots/img1.png" alt="Login and auth screenshot">
+        <figcaption data-i18n="shots.cap1">Login & Auth</figcaption>
+      </figure>
+      <figure class="shot-card">
+        <img src="./static/images/screenshots/img2.png" alt="Score module screenshot">
+        <figcaption data-i18n="shots.cap2">Score Query</figcaption>
+      </figure>
+      <figure class="shot-card">
+        <img src="./static/images/screenshots/img3.png" alt="Schedule module screenshot">
+        <figcaption data-i18n="shots.cap3">Schedule</figcaption>
+      </figure>
+      <figure class="shot-card">
+        <img src="./static/images/screenshots/img4.png" alt="Attendance module screenshot">
+        <figcaption data-i18n="shots.cap4">Attendance</figcaption>
+      </figure>
+      <figure class="shot-card">
+        <img src="./static/images/screenshots/img5.png" alt="Resource module screenshot">
+        <figcaption data-i18n="shots.cap5">Resource Sharing</figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -106,14 +146,18 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3 section-title">Abstract</h2>
+        <h2 class="title is-3 section-title" data-i18n="overview.title">📌 Project Overview</h2>
         <div class="content has-text-justified">
-          <p>
-            XJTUhub is an XJTU-oriented campus assistant system that combines a WeChat mini-program frontend and a Node.js backend service.
-            The frontend covers high-frequency student scenarios including login, weekly schedule, term score query, resource plaza, attendance panel,
-            and DDL management. The backend provides unified authentication and crawler-triggered data acquisition from eHall-related systems, then maps
-            heterogeneous raw data into stable API contracts for the mini-program. The project emphasizes practical usability, data-structure compatibility,
-            and maintainable school-provider extension for future multi-school support.
+          <p data-i18n="overview.p1">
+            XJTUhub is a campus learning assistant designed for Xi'an Jiaotong University students. The project contains two major parts:
+            a WeChat mini-program frontend (XJTUhub-main) and a Node.js crawler-backed service (XJTU-API-main). The mini-program focuses on
+            high-frequency student tasks (login, timetable, score, resources, attendance and DDL), while the backend focuses on stable data
+            contracts and crawler-triggered synchronization from eHall-related systems.
+          </p>
+          <p data-i18n="overview.p2">
+            Compared with a pure mock-data prototype, this project already includes a practical backend workflow: user login issues a local token,
+            crawler tasks are triggered asynchronously, and mapped data is returned through unified API endpoints. At the same time, several modules
+            preserve fallback data logic for robustness in network-unavailable or interface-unready cases.
           </p>
         </div>
       </div>
@@ -121,47 +165,253 @@
   </div>
 </section>
 
-<section class="section section-soft" id="features">
+<section class="section section-soft" id="implemented-targets">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered section-title">Core Features</h2>
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="target.title">✅ Implemented Functions & Planned Targets</h2>
+    <p class="target-intro" data-i18n="target.intro">
+      We rewrote this part in a product-friendly way: what users can do now, and what we are preparing next.
+      If you want technical detail, hover the info badge on each card.
+    </p>
+    <h3 class="target-subtitle" data-i18n="target.impl.subtitle">Already Implemented</h3>
+    <div class="columns is-multiline" style="margin-top: 0.3rem;">
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.impl.score.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.impl.score.title">Score Query + Average Analysis</h4>
+          <p data-i18n="target.impl.score.desc">
+            Students can view scores by term, open per-course details, and quickly estimate their current average performance.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.impl.attendance.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.impl.attendance.title">Attendance Query + Risk Warning</h4>
+          <p data-i18n="target.impl.attendance.desc">
+            Attendance records are summarized course-by-course with warning tiers, so users can notice risky courses early.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.impl.export.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.impl.export.title">Schedule / Todo Export</h4>
+          <p data-i18n="target.impl.export.desc">
+            Users can export timetable information and school-system todo items to reduce repeated manual checking.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.impl.resource.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.impl.resource.title">Open Resource Database</h4>
+          <p data-i18n="target.impl.resource.desc">
+            Learning materials can be uploaded, searched, and reused across users, helping build a practical shared knowledge space.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <h3 class="target-subtitle" data-i18n="target.plan.subtitle">Planned Next Stage</h3>
+    <div class="columns is-multiline" style="margin-top: 0.3rem;">
+      <div class="column is-4">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.plan.cloud.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.plan.cloud.title">Cloud Deployment</h4>
+          <p data-i18n="target.plan.cloud.desc">Move local backend services to WeChat Cloud and prepare production-grade rollout.</p>
+        </article>
+      </div>
+      <div class="column is-4">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.plan.map.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.plan.map.title">Map Navigation</h4>
+          <p data-i18n="target.plan.map.desc">Bind timetable classrooms to map APIs so students can navigate directly to class locations.</p>
+        </article>
+      </div>
+      <div class="column is-4">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="target.plan.forum.tip" aria-label="detail">i</span>
+          <h4 data-i18n="target.plan.forum.title">Academic Collaboration Forum</h4>
+          <p data-i18n="target.plan.forum.desc">Support posts and matching for student collaboration and teacher-student research/competition opportunities.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contribution">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="contrib.title">🤝 System Contribution Points</h2>
+    <p class="target-intro" data-i18n="contrib.intro">
+      This project is not “fully autonomous AI coding”. It is a vibe-coding workflow with continuous human review, requirement control, and
+      end-to-end team verification. The final quality comes from human-AI collaboration, not one-shot prompting.
+    </p>
+    <div class="contrib-tags">
+      <span class="contrib-tag" data-i18n="contrib.tag.opensource">Fully Open Source</span>
+      <span class="contrib-tag" data-i18n="contrib.tag.complete">Functionally Complete Baseline</span>
+      <span class="contrib-tag" data-i18n="contrib.tag.fillgap">Fills the gap after “西交小明” offline</span>
+    </div>
+
+    <div class="columns is-multiline" style="margin-top: 0.8rem;">
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.role.zhiyuan.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.role.zhiyuan.title">Zhiyuan Jiang — Overall Lead & AI Workflow Owner</h4>
+          <p data-i18n="contrib.role.zhiyuan.desc">
+            Responsible for project direction, baseline requirement research, AI skills investigation/deployment attempts,
+            and final function-level test orchestration.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.role.frontend.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.role.frontend.title">Yuexin Chen & Yuyang Xie — Frontend Development</h4>
+          <p data-i18n="contrib.role.frontend.desc">
+            Built the full mini-program UI flow and interaction pages, combining practical UI development experience
+            with AI-assisted design acceleration.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.role.xiang.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.role.xiang.title">Xiang Shi — Backend Crawler Pipeline</h4>
+          <p data-i18n="contrib.role.xiang.desc">
+            Implemented crawler orchestration, data mapping, and backend route support for course/score synchronization.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.role.yifan.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.role.yifan.title">Yifan Shan — Database & Resource Data Layer</h4>
+          <p data-i18n="contrib.role.yifan.desc">
+            Designed and implemented resource data persistence and file-sharing support, enabling multi-user reuse of study materials.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <div class="columns is-multiline" style="margin-top: 0.2rem;">
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.skills.ui.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.skills.ui.title">/ui-ux-pro-max in Practice</h4>
+          <img src="./static/images/skills/ui-ux-pro-max-github.png" alt="ui-ux-pro-max GitHub repository screenshot" class="skill-illustration">
+          <p data-i18n="contrib.skills.ui.desc">
+            Used as a design acceleration aid for layout style exploration and implementation iteration.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.skills.super.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.skills.super.title">/superpowers for Structured Delivery</h4>
+          <img src="./static/images/skills/superpowers-github.png" alt="superpowers GitHub repository screenshot" class="skill-illustration">
+          <p data-i18n="contrib.skills.super.desc">
+            Used to structure planning, debugging, verification and delivery steps under human checkpoints.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <div class="columns is-multiline" style="margin-top: 0.2rem;">
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.process.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.process.title">Requirement First, Then Agent Assignment</h4>
+          <p data-i18n="contrib.process.desc">
+            Before assigning tasks to agents, the team performed requirement decomposition, technical stack comparison,
+            and feasibility evaluation, then wrote detailed implementation instructions.
+          </p>
+        </article>
+      </div>
+      <div class="column is-6">
+        <article class="feature-card target-feature">
+          <span class="info-badge" data-i18n-tip="contrib.cost.tip" aria-label="detail">i</span>
+          <h4 data-i18n="contrib.cost.title">Cost & Quality Control</h4>
+          <p data-i18n="contrib.cost.desc">
+            The project cost stayed below 100 RMB (below the expected 200 RMB), while every feature still passed team-wide review and testing before release.
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="frontend">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="frontend.title">📱 Frontend Feature Breakdown (XJTUhub-main)</h2>
     <div class="columns is-multiline" style="margin-top: 1rem;">
       <div class="column is-6">
         <div class="feature-card">
-          <h3>Authentication</h3>
+          <h3 data-i18n="frontend.login.title">Login & Auth UX</h3>
           <ul>
-            <li>Student ID + password login</li>
-            <li>Captcha-based login initialization and verification</li>
-            <li>Token-based session handling with auto redirect on invalid auth</li>
+            <li data-i18n="frontend.login.1">Two login entries: normal login and captcha login pages.</li>
+            <li data-i18n="frontend.login.2">Credential validation, loading state, error toast, and post-login redirect handling.</li>
+            <li data-i18n="frontend.login.3">Optional account caching (<code>wx.setStorageSync("account")</code>) for quick relogin.</li>
+            <li data-i18n="frontend.login.4">After login success, frontend triggers backend crawler asynchronously.</li>
           </ul>
         </div>
       </div>
+
       <div class="column is-6">
         <div class="feature-card">
-          <h3>Course Schedule</h3>
+          <h3 data-i18n="frontend.course.title">Course Schedule Module</h3>
           <ul>
-            <li>Weekly timetable rendering</li>
-            <li>Current-week auto calculation</li>
-            <li>Course detail pop-up (teacher, location, week range, sections, credit)</li>
+            <li data-i18n="frontend.course.1">Weekly timetable with week switching (manual selection + swipe + step buttons).</li>
+            <li data-i18n="frontend.course.2">Current-week auto computation from configured term start date.</li>
+            <li data-i18n="frontend.course.3">Course detail popup with week/day/section/location/teacher/credit/category/method.</li>
+            <li data-i18n="frontend.course.4">Course color assignment with cache, versioning, and light/dark mode adaptation.</li>
           </ul>
         </div>
       </div>
+
       <div class="column is-6">
         <div class="feature-card">
-          <h3>Score Query</h3>
+          <h3 data-i18n="frontend.score.title">Score Module</h3>
           <ul>
-            <li>Term-based score list switching</li>
-            <li>Raw score breakdown (normal/midterm/final/composite)</li>
-            <li>Local cache + manual refresh</li>
+            <li data-i18n="frontend.score.1">Term-level score list viewing with term selector.</li>
+            <li data-i18n="frontend.score.2">Raw score detail mapping (normal/midterm/final/skill/composite).</li>
+            <li data-i18n="frontend.score.3">Graceful value formatting (missing values shown as <code>--</code>).</li>
+            <li data-i18n="frontend.score.4">Dual-cache strategy for valid score list and raw score list.</li>
           </ul>
         </div>
       </div>
+
       <div class="column is-6">
         <div class="feature-card">
-          <h3>Learning Assistant</h3>
+          <h3 data-i18n="frontend.resource.title">Resource Plaza Module</h3>
           <ul>
-            <li>Resource plaza with category filter and keyword search</li>
-            <li>Attendance and DDL modules (current local demo datasets)</li>
-            <li>Function aggregation page + customized TabBar UX</li>
+            <li data-i18n="frontend.resource.1">Category filtering (courseware, notes, exams), keyword search and pagination.</li>
+            <li data-i18n="frontend.resource.2">Pull-down refresh + reach-bottom loading behavior.</li>
+            <li data-i18n="frontend.resource.3">8-second timeout fallback to local demo resources to keep UI always available.</li>
+            <li data-i18n="frontend.resource.4">Resource normalization for multiple backend payload shapes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="column is-6">
+        <div class="feature-card">
+          <h3 data-i18n="frontend.assistant.title">Assistant Modules (Attendance / DDL / Function / Mine)</h3>
+          <ul>
+            <li data-i18n="frontend.assistant.1">Attendance page with risk-tier demo data (normal/warning/danger) and local cache.</li>
+            <li data-i18n="frontend.assistant.2">DDL list with completion toggle and one-click demo reset.</li>
+            <li data-i18n="frontend.assistant.3">Function hub for quick navigation to score, attendance and DDL pages.</li>
+            <li data-i18n="frontend.assistant.4">Profile page with auth-state display, shortcut menu and logout operation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="column is-6">
+        <div class="feature-card">
+          <h3 data-i18n="frontend.ui.title">UI Engineering Details</h3>
+          <ul>
+            <li data-i18n="frontend.ui.1">Custom TabBar with active-route sync and theme sync.</li>
+            <li data-i18n="frontend.ui.2">Page enter animation pattern reused across major pages.</li>
+            <li data-i18n="frontend.ui.3">Unified request wrapper for token injection, error code handling and login redirection.</li>
+            <li data-i18n="frontend.ui.4">Theme mode support across page components (light mode baseline + dark mode adaptation logic).</li>
           </ul>
         </div>
       </div>
@@ -169,30 +419,125 @@
   </div>
 </section>
 
-<section class="section" id="architecture">
+<section class="section" id="backend">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered section-title">System Architecture</h2>
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="backend.title">⚙️ Backend Capability Breakdown (XJTU-API-main)</h2>
     <div class="columns" style="margin-top: 1rem;">
       <div class="column is-6">
         <div class="content pipeline">
-          <h4 class="title is-5">Frontend (XJTUhub-main)</h4>
-          <p>
-            Built on native WeChat mini-program framework with Vant Weapp and ColorUI.
-            It uses a unified request wrapper for token injection, error-code interpretation,
-            and login fallback. Main pages include login, index resources, course, score,
-            attendance, DDL, and mine.
-          </p>
+          <h4 class="title is-5" data-i18n="backend.auth.title">Auth and Compatibility Layer</h4>
+          <ul>
+            <li data-i18n="backend.auth.1">Returns local token in format <code>xjtu-&lt;stuId&gt;-&lt;timestamp&gt;-&lt;random&gt;</code>.</li>
+            <li data-i18n="backend.auth.2">Keeps <code>/login-init</code>, <code>/login-code</code>, <code>/login-verify</code> for compatibility with mini-program routes.</li>
+            <li data-i18n="backend.auth.3">Uses request-header token parsing for scoped data retrieval by student id.</li>
+            <li data-i18n="backend.auth.4">Maintains unified response structure: <code>{ code, msg, data }</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="column is-6">
+        <div class="content pipeline">
+          <h4 class="title is-5" data-i18n="backend.crawler.title">Crawler Task Orchestration</h4>
+          <ul>
+            <li data-i18n="backend.crawler.1">Supports target-based crawling: all / course / score.</li>
+            <li data-i18n="backend.crawler.2">Background process spawning with timeout protection and log tail capture.</li>
+            <li data-i18n="backend.crawler.3">Runtime state includes running flag, active target, timestamps, last error and summary.</li>
+            <li data-i18n="backend.crawler.4">Crawler output is synchronized and mapped before API exposure.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns" style="margin-top: 0.3rem;">
+      <div class="column is-6">
+        <div class="content pipeline">
+          <h4 class="title is-5" data-i18n="backend.data.title">Mapped Data Endpoints</h4>
+          <ul>
+            <li data-i18n="backend.data.1"><code>/courses</code> returns normalized course entries from crawler-mapped data.</li>
+            <li data-i18n="backend.data.2"><code>/scores</code> and <code>/raw-scores</code> return term-grouped score datasets.</li>
+            <li data-i18n="backend.data.3">Returns empty arrays when mapped data is unavailable, preventing frontend crashes.</li>
+            <li data-i18n="backend.data.4">Status endpoint provides summary counts for monitoring and UI hinting.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="column is-6">
+        <div class="content pipeline">
+          <h4 class="title is-5" data-i18n="backend.resource.title">Resource Service</h4>
+          <ul>
+            <li data-i18n="backend.resource.1">File-list API with pagination, category and keyword filtering.</li>
+            <li data-i18n="backend.resource.2">Upload/delete support with ownership check via token-derived uploader id.</li>
+            <li data-i18n="backend.resource.3">File metadata persistence (<code>.meta.json</code>) and deterministic resource id generation.</li>
+            <li data-i18n="backend.resource.4">Material URL generation under <code>/materials/*</code> path.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="dataflow">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="dataflow.title">🔄 End-to-End Data Flow</h2>
+    <div class="content" style="margin-top: 1rem;">
+      <ol>
+        <li data-i18n="dataflow.1">User submits account/password from mini-program login page and receives local token.</li>
+        <li data-i18n="dataflow.2">Frontend stores token and immediately triggers crawler task in background.</li>
+        <li data-i18n="dataflow.3">Crawler script logs into eHall workflow and exports raw data artifacts.</li>
+        <li data-i18n="dataflow.4">Backend maps raw data into frontend contract objects (course/score/raw-score).</li>
+        <li data-i18n="dataflow.5">Mini-program pages request mapped endpoints and cache results locally for quick display.</li>
+        <li data-i18n="dataflow.6">If a module endpoint is delayed/unavailable, frontend fallback logic preserves usability.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="api">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="api.title">🧩 Implemented API Surface</h2>
+    <div class="columns" style="margin-top: 1rem;">
+      <div class="column is-6">
+        <div class="feature-card api-card">
+          <h3 data-i18n="api.auth">Auth & Session</h3>
+          <ul>
+            <li><code>POST /login</code></li>
+            <li><code>GET /login-init</code></li>
+            <li><code>GET /login-code</code></li>
+            <li><code>POST /login-verify</code></li>
+          </ul>
         </div>
       </div>
       <div class="column is-6">
-        <div class="content pipeline">
-          <h4 class="title is-5">Backend (XJTU-API-main)</h4>
-          <p>
-            Node.js service exposing stable REST endpoints for the mini-program.
-            It supports login token issuance, crawler trigger/status query, and mapped output
-            endpoints for courses and scores. Crawler outputs are normalized and persisted to
-            JSON artifacts for retrieval and debugging.
-          </p>
+        <div class="feature-card api-card">
+          <h3 data-i18n="api.core">Core Data</h3>
+          <ul>
+            <li><code>GET /courses</code></li>
+            <li><code>GET /scores</code></li>
+            <li><code>GET /raw-scores</code></li>
+            <li><code>GET /resources</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="feature-card api-card">
+          <h3 data-i18n="api.crawl">Crawler Control</h3>
+          <ul>
+            <li><code>POST /crawl/xjtu/trigger</code></li>
+            <li><code>POST /crawl/xjtu/course/trigger</code></li>
+            <li><code>POST /crawl/xjtu/score/trigger</code></li>
+            <li><code>GET /crawl/xjtu/status</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="feature-card api-card">
+          <h3 data-i18n="api.ext">Extended & Planned-Ready</h3>
+          <ul>
+            <li><code>GET /attendance</code> / <code>GET /attendances</code></li>
+            <li><code>GET /ddl</code> / <code>PATCH /ddl/:id</code></li>
+            <li><code>POST /crawl/syxt/ddl/trigger</code></li>
+            <li><code>POST /crawl/xjtu/attendance/trigger</code></li>
+          </ul>
         </div>
       </div>
     </div>
@@ -201,23 +546,35 @@
 
 <section class="section section-soft" id="implementation">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered section-title">Implementation Snapshot</h2>
+    <h2 class="title is-3 has-text-centered section-title" data-i18n="impl.title">🗂️ Implementation Snapshot & Repository Mapping</h2>
     <div class="content" style="margin-top: 1rem;">
-      <p><strong>Repository structure in final branch:</strong></p>
+      <p data-i18n="impl.p1"><strong>Top-level structure:</strong></p>
       <ul>
-        <li><code>XJTUhub-main/</code>: WeChat mini-program frontend</li>
-        <li><code>XJTU-API-main/</code>: Node.js backend + crawler scripts</li>
-        <li><code>docs/backend-realtime-crawler-spec.md</code>: backend compatibility and extension specification</li>
+        <li><code>XJTUhub-main/</code> — WeChat mini-program frontend (pages, custom tab bar, request utilities, UI assets).</li>
+        <li><code>XJTU-API-main/</code> — Koa-based backend (routes/controllers/services/crawler scripts/resources).</li>
+        <li><code>README.md</code> — integrated project introduction.</li>
       </ul>
 
-      <p><strong>Current integrated API set:</strong></p>
+      <p data-i18n="impl.p2"><strong>Frontend key implementation files:</strong></p>
       <ul>
-        <li><code>POST /login</code>, <code>GET /login-init</code>, <code>POST /login-verify</code>, <code>GET /login-code</code></li>
-        <li><code>GET /courses</code>, <code>GET /scores</code>, <code>GET /raw-scores</code></li>
-        <li>Backend crawler-related: <code>POST /crawl/xjtu/trigger</code>, <code>GET /crawl/xjtu/status</code></li>
+        <li><code>pages/login/index.js</code>, <code>pages/login-verify/index.js</code> — dual login paths + crawler trigger.</li>
+        <li><code>pages/course/index.js</code> — week navigation, calendar derivation, course detail modal.</li>
+        <li><code>pages/score/index.js</code> — term switch + raw detail join + cache strategy.</li>
+        <li><code>pages/index/index.js</code> — resource search/filter/pagination + timeout fallback.</li>
       </ul>
 
-      <p><strong>Response contract:</strong> <code>{ code, msg, data }</code> with <code>code=0/-1/403</code> semantics for frontend compatibility.</p>
+      <p data-i18n="impl.p3"><strong>Backend key implementation files:</strong></p>
+      <ul>
+        <li><code>routes/index.js</code> and <code>routes/data.js</code> — route surface and auth middleware.</li>
+        <li><code>controllers/crawler.js</code> — background crawling orchestration and status summaries.</li>
+        <li><code>controllers/course.js</code>, <code>controllers/score.js</code> — mapped data serving.</li>
+        <li><code>controllers/resources.js</code> — material file management, metadata, owner permissions.</li>
+      </ul>
+
+      <p data-i18n="impl.p4">
+        The current codebase already provides a complete mini-program + backend integration baseline for campus assistant scenarios,
+        while keeping extension paths for real-time attendance/DDL and broader school-provider architecture.
+      </p>
     </div>
   </div>
 </section>
@@ -225,13 +582,392 @@
 <footer class="footer">
   <div class="container is-max-desktop">
     <div class="content has-text-centered footer-note">
-      <p>
-        This page is adapted in the style of the Nerfies project website template.
-        Content is based on the <code>final</code> branch implementation of XJTU-SE-project.
+      <p class="visit-counter">
+        <span id="busuanzi_container_site_uv"><span data-i18n="footer.visitors">Visitors</span>: <strong id="busuanzi_value_site_uv"></strong></span>
+        <span class="counter-sep">|</span>
+        <span id="busuanzi_container_site_pv"><span data-i18n="footer.pv">Page Views</span>: <strong id="busuanzi_value_site_pv"></strong></span>
       </p>
     </div>
   </div>
 </footer>
 
+<script>
+  (function () {
+    const I18N = {
+      en: {
+        "nav.overview": "Overview",
+        "nav.frontend": "Frontend",
+        "nav.backend": "Backend",
+        "nav.dataflow": "Data Flow",
+        "nav.api": "API",
+        "nav.implementation": "Implementation",
+        "hero.title": "XJTUhub: Campus Learning Assistant for XJTU",
+        "hero.subtitle": "A WeChat Mini Program + Node.js backend system for schedule, score, attendance, resource browsing, and DDL support.",
+        "hero.affiliation": "Xi'an Jiaotong University · Software Engineering Project",
+        "hero.repo": "Project Repo",
+        "hero.branch": "Final Branch",
+        "hero.details": "System Details",
+        "author.zhiyuan": "Zhiyuan Jiang",
+        "author.xiang": "Xiang Shi",
+        "author.yuexin": "Yuexin Chen",
+        "author.yifan": "Yifan Shan",
+        "author.yuyang": "Yuyang Xie",
+        "shots.title": "🖼️ Feature Screenshots",
+        "shots.cap1": "Login & Auth",
+        "shots.cap2": "Score Query",
+        "shots.cap3": "Schedule",
+        "shots.cap4": "Attendance",
+        "shots.cap5": "Resource Sharing",
+        "overview.demoCaption": "Top demos: mini-program workflow and integrated backend crawling pipeline.",
+        "overview.title": "📌 Project Overview",
+        "overview.p1": "XJTUhub is a campus learning assistant designed for Xi'an Jiaotong University students. The project contains two major parts: a WeChat mini-program frontend (XJTUhub-main) and a Node.js crawler-backed service (XJTU-API-main). The mini-program focuses on high-frequency student tasks (login, timetable, score, resources, attendance and DDL), while the backend focuses on stable data contracts and crawler-triggered synchronization from eHall-related systems.",
+        "overview.p2": "Compared with a pure mock-data prototype, this project already includes a practical backend workflow: user login issues a local token, crawler tasks are triggered asynchronously, and mapped data is returned through unified API endpoints. At the same time, several modules preserve fallback data logic for robustness in network-unavailable or interface-unready cases.",
+        "target.title": "✅ Implemented Functions & Planned Targets",
+        "target.impl.title": "Implemented Functions",
+        "target.impl.1": "Score query, with average-score calculation support.",
+        "target.impl.2": "Attendance query with risk warning.",
+        "target.impl.3": "Schedule export and school-system todo synchronization/export.",
+        "target.impl.4": "Resource database for shared study-material files.",
+        "target.plan.title": "Planned Next Functions",
+        "target.plan.1": "Migrate local backend to WeChat Cloud Platform for production launch readiness.",
+        "target.plan.2": "Integrate map API with timetable for classroom navigation.",
+        "target.plan.3": "Build forum posting and interaction system for student-student collaboration and teacher-student recruitment/mentoring.",
+        "frontend.title": "📱 Frontend Feature Breakdown (XJTUhub-main)",
+        "frontend.login.title": "Login & Auth UX",
+        "frontend.login.1": "Two login entries: normal login and captcha login pages.",
+        "frontend.login.2": "Credential validation, loading state, error toast, and post-login redirect handling.",
+        "frontend.login.3": "Optional account caching (wx.setStorageSync(\"account\")) for quick relogin.",
+        "frontend.login.4": "After login success, frontend triggers backend crawler asynchronously.",
+        "frontend.course.title": "Course Schedule Module",
+        "frontend.course.1": "Weekly timetable with week switching (manual selection + swipe + step buttons).",
+        "frontend.course.2": "Current-week auto computation from configured term start date.",
+        "frontend.course.3": "Course detail popup with week/day/section/location/teacher/credit/category/method.",
+        "frontend.course.4": "Course color assignment with cache, versioning, and light/dark mode adaptation.",
+        "frontend.score.title": "Score Module",
+        "frontend.score.1": "Term-level score list viewing with term selector.",
+        "frontend.score.2": "Raw score detail mapping (normal/midterm/final/skill/composite).",
+        "frontend.score.3": "Graceful value formatting (missing values shown as --).",
+        "frontend.score.4": "Dual-cache strategy for valid score list and raw score list.",
+        "frontend.resource.title": "Resource Plaza Module",
+        "frontend.resource.1": "Category filtering (courseware, notes, exams), keyword search and pagination.",
+        "frontend.resource.2": "Pull-down refresh + reach-bottom loading behavior.",
+        "frontend.resource.3": "8-second timeout fallback to local demo resources to keep UI always available.",
+        "frontend.resource.4": "Resource normalization for multiple backend payload shapes.",
+        "frontend.assistant.title": "Assistant Modules (Attendance / DDL / Function / Mine)",
+        "frontend.assistant.1": "Attendance page with risk-tier demo data (normal/warning/danger) and local cache.",
+        "frontend.assistant.2": "DDL list with completion toggle and one-click demo reset.",
+        "frontend.assistant.3": "Function hub for quick navigation to score, attendance and DDL pages.",
+        "frontend.assistant.4": "Profile page with auth-state display, shortcut menu and logout operation.",
+        "frontend.ui.title": "UI Engineering Details",
+        "frontend.ui.1": "Custom TabBar with active-route sync and theme sync.",
+        "frontend.ui.2": "Page enter animation pattern reused across major pages.",
+        "frontend.ui.3": "Unified request wrapper for token injection, error code handling and login redirection.",
+        "frontend.ui.4": "Theme mode support across page components (light mode baseline + dark mode adaptation logic).",
+        "backend.title": "⚙️ Backend Capability Breakdown (XJTU-API-main)",
+        "backend.auth.title": "Auth and Compatibility Layer",
+        "backend.auth.1": "Returns local token in format xjtu-<stuId>-<timestamp>-<random>.",
+        "backend.auth.2": "Keeps /login-init, /login-code, /login-verify for compatibility with mini-program routes.",
+        "backend.auth.3": "Uses request-header token parsing for scoped data retrieval by student id.",
+        "backend.auth.4": "Maintains unified response structure: { code, msg, data }.",
+        "backend.crawler.title": "Crawler Task Orchestration",
+        "backend.crawler.1": "Supports target-based crawling: all / course / score.",
+        "backend.crawler.2": "Background process spawning with timeout protection and log tail capture.",
+        "backend.crawler.3": "Runtime state includes running flag, active target, timestamps, last error and summary.",
+        "backend.crawler.4": "Crawler output is synchronized and mapped before API exposure.",
+        "backend.data.title": "Mapped Data Endpoints",
+        "backend.data.1": "/courses returns normalized course entries from crawler-mapped data.",
+        "backend.data.2": "/scores and /raw-scores return term-grouped score datasets.",
+        "backend.data.3": "Returns empty arrays when mapped data is unavailable, preventing frontend crashes.",
+        "backend.data.4": "Status endpoint provides summary counts for monitoring and UI hinting.",
+        "backend.resource.title": "Resource Service",
+        "backend.resource.1": "File-list API with pagination, category and keyword filtering.",
+        "backend.resource.2": "Upload/delete support with ownership check via token-derived uploader id.",
+        "backend.resource.3": "File metadata persistence (.meta.json) and deterministic resource id generation.",
+        "backend.resource.4": "Material URL generation under /materials/* path.",
+        "dataflow.title": "🔄 End-to-End Data Flow",
+        "dataflow.1": "User submits account/password from mini-program login page and receives local token.",
+        "dataflow.2": "Frontend stores token and immediately triggers crawler task in background.",
+        "dataflow.3": "Crawler script logs into eHall workflow and exports raw data artifacts.",
+        "dataflow.4": "Backend maps raw data into frontend contract objects (course/score/raw-score).",
+        "dataflow.5": "Mini-program pages request mapped endpoints and cache results locally for quick display.",
+        "dataflow.6": "If a module endpoint is delayed/unavailable, frontend fallback logic preserves usability.",
+        "api.title": "🧩 Implemented API Surface",
+        "api.auth": "Auth & Session",
+        "api.core": "Core Data",
+        "api.crawl": "Crawler Control",
+        "api.ext": "Extended & Planned-Ready",
+        "impl.title": "🗂️ Implementation Snapshot & Repository Mapping",
+        "impl.p1": "Top-level structure:",
+        "impl.p2": "Frontend key implementation files:",
+        "impl.p3": "Backend key implementation files:",
+        "impl.p4": "The current codebase already provides a complete mini-program + backend integration baseline for campus assistant scenarios, while keeping extension paths for real-time attendance/DDL and broader school-provider architecture.",
+        "footer.visitors": "Visitors",
+        "footer.pv": "Page Views"
+      },
+      zh: {
+        "nav.overview": "项目概览",
+        "nav.frontend": "前端功能",
+        "nav.backend": "后端能力",
+        "nav.dataflow": "数据流",
+        "nav.api": "接口列表",
+        "nav.implementation": "实现细节",
+        "hero.title": "XJTUhub：面向西交学生的校园学习助手",
+        "hero.subtitle": "一个由微信小程序前端 + Node.js 后端组成的校园学习系统，覆盖课表、成绩、资料、考勤与DDL场景。",
+        "hero.affiliation": "西安交通大学 · 软件工程课程项目",
+        "hero.repo": "项目仓库",
+        "hero.branch": "Final 分支",
+        "hero.details": "系统细节",
+        "author.zhiyuan": "江知远",
+        "author.xiang": "石翔",
+        "author.yuexin": "陈粤鑫",
+        "author.yifan": "单逸凡",
+        "author.yuyang": "谢雨阳",
+        "shots.title": "🖼️ 功能截图",
+        "shots.cap1": "登录与鉴权",
+        "shots.cap2": "成绩查询",
+        "shots.cap3": "课表功能",
+        "shots.cap4": "考勤功能",
+        "shots.cap5": "资料共享",
+        "overview.demoCaption": "顶部演示视频：小程序使用流程与后端爬虫联动流程。",
+        "overview.title": "📌 项目概览",
+        "overview.p1": "XJTUhub 是一个面向西安交通大学同学的校园学习助手。项目由两部分组成：微信小程序前端（XJTUhub-main）与 Node.js 爬虫后端（XJTU-API-main）。前端聚焦高频学生任务（登录、课表、成绩、资料、考勤、DDL），后端聚焦稳定接口契约和 eHall 相关系统的数据同步。",
+        "overview.p2": "相较于纯演示原型，本项目已经具备可运行的后端闭环：登录后签发本地 token，异步触发爬虫任务，再通过统一接口返回映射后的课表与成绩数据。同时，部分模块保留了本地回退机制，保证在网络异常或接口未就绪时仍可用。",
+        "target.title": "✅ 已实现功能与预期功能",
+        "target.impl.title": "已实现功能",
+        "target.impl.1": "查询成绩，并支持均分计算。",
+        "target.impl.2": "考勤系统支持考勤查询与预警。",
+        "target.impl.3": "支持导出课表及学校系统中的待办任务。",
+        "target.impl.4": "内置资料数据库，支持学习资料文件共享。",
+        "target.plan.title": "预期实现功能",
+        "target.plan.1": "将本地后端迁移到微信云平台，准备真正上线。",
+        "target.plan.2": "根据课表接入地图 API，实现教室导航。",
+        "target.plan.3": "建设论坛发帖与互动能力，支持学生协作、师生科研/竞赛招募与对接。",
+        "frontend.title": "📱 前端功能详解（XJTUhub-main）",
+        "frontend.login.title": "登录与鉴权体验",
+        "frontend.login.1": "提供普通登录与验证码登录两套入口页面。",
+        "frontend.login.2": "包含输入校验、加载状态、错误提示与登录后跳转恢复。",
+        "frontend.login.3": "支持账号信息本地缓存（wx.setStorageSync(\"account\")）以便快速登录。",
+        "frontend.login.4": "登录成功后自动异步触发后端爬虫任务。",
+        "frontend.course.title": "课表模块",
+        "frontend.course.1": "周课表展示，支持选择周次、左右切换、滑动切换。",
+        "frontend.course.2": "基于开学日期自动计算当前周。",
+        "frontend.course.3": "课程详情弹窗包含周几、周次、节次、地点、教师、学分、课程类型与考查方式。",
+        "frontend.course.4": "课程颜色映射支持缓存、版本控制与主题模式切换。",
+        "frontend.score.title": "成绩模块",
+        "frontend.score.1": "按学期切换成绩列表。",
+        "frontend.score.2": "支持原始成绩明细映射（平时/期中/期末/实验/总评）。",
+        "frontend.score.3": "缺失值采用 -- 统一兜底展示。",
+        "frontend.score.4": "有效成绩与原始成绩分层缓存，提升二次进入速度。",
+        "frontend.resource.title": "资料广场模块",
+        "frontend.resource.1": "支持分类筛选（课件/笔记/试题）、关键词搜索与分页。",
+        "frontend.resource.2": "支持下拉刷新与触底加载。",
+        "frontend.resource.3": "请求 8 秒超时后自动回退本地示例资料，保证界面可用。",
+        "frontend.resource.4": "对不同后端返回结构做统一字段归一化。",
+        "frontend.assistant.title": "辅助功能模块（考勤 / DDL / 功能页 / 个人中心）",
+        "frontend.assistant.1": "考勤页内置风险分级示例数据（normal/warning/danger）并缓存。",
+        "frontend.assistant.2": "DDL 支持完成状态切换与一键恢复示例数据。",
+        "frontend.assistant.3": "功能聚合页支持一键跳转成绩、考勤、DDL。",
+        "frontend.assistant.4": "个人中心支持登录态展示、快捷入口与退出登录。",
+        "frontend.ui.title": "界面工程实现细节",
+        "frontend.ui.1": "自定义 TabBar，支持当前路由高亮与主题同步。",
+        "frontend.ui.2": "多个页面复用统一入场动画模式。",
+        "frontend.ui.3": "统一请求封装负责 token 注入、错误码处理和登录跳转。",
+        "frontend.ui.4": "组件层面保留主题模式适配（浅色基础 + 深色扩展逻辑）。",
+        "backend.title": "⚙️ 后端能力详解（XJTU-API-main）",
+        "backend.auth.title": "认证与兼容层",
+        "backend.auth.1": "登录后返回本地 token，格式为 xjtu-<学号>-<时间戳>-<随机串>。",
+        "backend.auth.2": "保留 /login-init、/login-code、/login-verify 路由以兼容前端接口调用。",
+        "backend.auth.3": "通过请求头 token 解析学号，实现按用户隔离的数据读取。",
+        "backend.auth.4": "统一响应结构为 { code, msg, data }。",
+        "backend.crawler.title": "爬虫任务编排",
+        "backend.crawler.1": "支持 all / course / score 三种抓取目标。",
+        "backend.crawler.2": "后台子进程执行，带超时保护与日志尾部捕获。",
+        "backend.crawler.3": "任务状态包含运行标记、目标类型、时间戳、错误信息、统计摘要。",
+        "backend.crawler.4": "抓取完成后进行数据同步与映射，再对外提供接口。",
+        "backend.data.title": "映射数据接口",
+        "backend.data.1": "/courses 返回映射后的标准课表数据。",
+        "backend.data.2": "/scores 与 /raw-scores 返回按学期分组的成绩数据。",
+        "backend.data.3": "当映射数据不存在时返回空数组，避免前端崩溃。",
+        "backend.data.4": "状态接口返回计数摘要，便于前端提示与监控。",
+        "backend.resource.title": "资料服务",
+        "backend.resource.1": "提供资料列表分页、分类筛选与关键词检索。",
+        "backend.resource.2": "支持上传/删除，并按 token 所属用户进行权限判断。",
+        "backend.resource.3": "使用 .meta.json 持久化元信息，资源 ID 稳定可复现。",
+        "backend.resource.4": "资料文件通过 /materials/* 路径访问。",
+        "dataflow.title": "🔄 端到端数据流",
+        "dataflow.1": "用户在小程序登录页提交账号密码，后端签发本地 token。",
+        "dataflow.2": "前端存储 token 后立即异步触发爬虫任务。",
+        "dataflow.3": "爬虫登录 eHall 流程并导出原始数据文件。",
+        "dataflow.4": "后端把原始数据映射为前端契约对象（课表/成绩/原始成绩）。",
+        "dataflow.5": "小程序页面请求映射接口并本地缓存，提升后续访问速度。",
+        "dataflow.6": "当模块接口暂不可用时，前端回退机制保证页面可继续使用。",
+        "api.title": "🧩 已实现接口面",
+        "api.auth": "认证与会话",
+        "api.core": "核心数据接口",
+        "api.crawl": "爬虫控制接口",
+        "api.ext": "扩展与预留接口",
+        "impl.title": "🗂️ 实现映射与仓库结构",
+        "impl.p1": "顶层目录结构：",
+        "impl.p2": "前端关键实现文件：",
+        "impl.p3": "后端关键实现文件：",
+        "impl.p4": "当前代码已经形成“小程序 + 后端”的完整联调基线，同时保留了考勤/DDL实时化与多学校扩展路径。",
+        "footer.visitors": "访客数",
+        "footer.pv": "浏览量"
+      }
+    }
+
+
+    Object.assign(I18N.en, {
+      "nav.contribution": "Contribution",
+      "target.title": "✅ What We Have Built & What Comes Next",
+      "target.intro": "This section is written for normal users, not just engineers: what you can use today and what we are preparing next. Hover the top-right info icon on each card to see implementation details.",
+      "target.impl.subtitle": "Implemented Features",
+      "target.impl.score.title": "📊 Score Query + Average Calculation",
+      "target.impl.score.desc": "Check scores by semester, review course details, and compute overall average quickly for study planning.",
+      "target.impl.score.tip": "Implemented through frontend score pages and backend score APIs. Supports term-level data display and average computation based on selected courses.",
+      "target.impl.attendance.title": "🚨 Attendance Query + Multi-level Warning",
+      "target.impl.attendance.desc": "See normal/late/absent records per course, with clear warning levels so risk is visible before the exam deadline.",
+      "target.impl.attendance.tip": "Attendance data is aggregated per course, then mapped to warning levels: 1 absence (yellow), 2 absences (orange), 3 absences (red, exam eligibility risk).",
+      "target.impl.export.title": "🗓️ Timetable & Todo Export",
+      "target.impl.export.desc": "Export class schedules and school-system todo tasks, so you do not need to repeatedly open multiple portals.",
+      "target.impl.export.tip": "Supports schedule data export and todo-task synchronization/export from integrated school-system data sources.",
+      "target.impl.resource.title": "📚 Shared Resource Database",
+      "target.impl.resource.desc": "Upload and share notes, courseware, and exam resources in one place to support peer learning.",
+      "target.impl.resource.tip": "Backed by resource storage and metadata indexing to support upload, filtering, retrieval, and multi-user reuse.",
+      "target.plan.subtitle": "Planned Next Stage",
+      "target.plan.cloud.title": "☁️ Move Backend to WeChat Cloud",
+      "target.plan.cloud.desc": "Migrate local backend services to cloud deployment and prepare production-grade launch.",
+      "target.plan.cloud.tip": "Focus: deployment architecture, credential management, scalable scheduling, and online operation readiness.",
+      "target.plan.map.title": "🧭 Course Navigation with Map API",
+      "target.plan.map.desc": "Connect classroom data from timetable to map APIs and provide direct route guidance to class locations.",
+      "target.plan.map.tip": "Classroom location parsing + map marker generation + route launch from schedule entries.",
+      "target.plan.forum.title": "💬 Collaboration Forum",
+      "target.plan.forum.desc": "Build a forum for student collaboration and teacher-student matchmaking in research and competitions.",
+      "target.plan.forum.tip": "Planned support includes posting, replies, tags, and matching use cases: student collaboration, teacher recruitment, student initiative calls.",
+      "contrib.title": "🤝 System Contribution Highlights",
+      "contrib.intro": "This project is vibe-coding with strict human review, not fully autonomous development. Our team did requirement analysis, architecture decisions, cost control, and continuous verification. Simply throwing tasks to AI cannot produce this level of coordinated frontend-backend delivery.",
+      "contrib.tag.opensource": "Fully Open Source",
+      "contrib.tag.complete": "Complete End-to-End Baseline",
+      "contrib.tag.fillgap": "Fills the Gap After “XJTU Xiaoming” Went Offline",
+      "contrib.role.zhiyuan.title": "🧠 Zhiyuan Jiang — Project Lead & AI Workflow Design",
+      "contrib.role.zhiyuan.desc": "Led project direction, baseline requirement research, AI skill exploration/deployment trials, and end-to-end function testing coordination.",
+      "contrib.role.zhiyuan.tip": "Key responsibilities include baseline feature investigation, evaluating skills such as /ui-ux-pro-max and /superpowers for agent workflows, and organizing full-chain test verification before release.",
+      "contrib.role.frontend.title": "🎨 Yuexin Chen & Yuyang Xie — Frontend Implementation",
+      "contrib.role.frontend.desc": "Built major mini-program pages and interaction flows with practical UI engineering experience and AI-assisted design iteration.",
+      "contrib.role.frontend.tip": "Frontend work is mainly reflected in XJTUhub-main pages/components, combining UI design skills and engineering implementation to deliver coherent interactive experience.",
+      "contrib.role.xiang.title": "🕷️ Xiang Shi — Backend Crawler",
+      "contrib.role.xiang.desc": "Implemented backend crawling workflow and data mapping pipeline for campus-system synchronization.",
+      "contrib.role.xiang.tip": "Backend crawler logic and synchronization path in XJTU-API-main provide the data foundation for score/schedule/attendance features.",
+      "contrib.role.yifan.title": "🗃️ Yifan Shan — Database Layer",
+      "contrib.role.yifan.desc": "Designed and implemented resource persistence and data-layer support for shared learning materials.",
+      "contrib.role.yifan.tip": "Database and resource-service work supports file metadata persistence, querying, and stable reuse across users.",
+      "contrib.skills.ui.title": "🧩 /ui-ux-pro-max in Real Workflow",
+      "contrib.skills.ui.desc": "Used for UI scheme exploration and fast iteration, then refined by frontend developers based on real implementation constraints.",
+      "contrib.skills.ui.tip": "It improved proposal speed, but final page quality still depended on human selection, implementation tuning, and usability checks.",
+      "contrib.skills.super.title": "⚙️ /superpowers for Structured Delivery",
+      "contrib.skills.super.desc": "Used to structure planning, debugging, verification, and delivery checkpoints under human supervision.",
+      "contrib.skills.super.tip": "The team used process-oriented skill chains to reduce AI hallucination risk and keep implementation aligned with requirements.",
+      "contrib.process.title": "📋 Requirement First, Agent Assignment Second",
+      "contrib.process.desc": "Before assigning tasks to agents, we completed requirement decomposition, stack research, feasibility analysis, and wrote detailed implementation documents.",
+      "contrib.process.tip": "Human-led requirement docs and step-by-step task boundaries are key reasons this project reached stable full-stack integration instead of fragmented outputs.",
+      "contrib.cost.title": "💰 Cost and Quality Governance",
+      "contrib.cost.desc": "The total cost was controlled under 100 RMB (well below the expected 200 RMB), and every feature was reviewed and tested by the full team before release.",
+      "contrib.cost.tip": "Cost control came from scoped planning and targeted agent usage; quality came from long-cycle human review and cross-member testing before release."
+    });
+
+    Object.assign(I18N.zh, {
+      "nav.contribution": "系统贡献",
+      "target.title": "✅ 已实现功能与下一步规划",
+      "target.intro": "这部分用更通俗的方式说明：你现在能直接用什么，我们下一阶段准备做什么。每张卡片右上角的 info 小角标可查看实现细节。",
+      "target.impl.subtitle": "已实现功能",
+      "target.impl.score.title": "📊 成绩查询与均分计算",
+      "target.impl.score.desc": "支持按学期查看成绩、查看课程明细，并快速计算整体均分，方便复盘学习状态。",
+      "target.impl.score.tip": "依托前端成绩页与后端成绩接口联动实现，支持按学期展示成绩，并对全选/指定课程进行均分计算。",
+      "target.impl.attendance.title": "🚨 考勤查询与分级预警",
+      "target.impl.attendance.desc": "按课程汇总正常/迟到/缺勤数据，并给出分级提示，让风险在临近考试前就能被看到。",
+      "target.impl.attendance.tip": "考勤按课程聚合后进行风险分级：缺勤1次黄、2次橙、3次红（存在禁考风险）。",
+      "target.impl.export.title": "🗓️ 课表与待办导出",
+      "target.impl.export.desc": "支持导出课表与学校系统待办任务，减少在多个系统之间反复切换。",
+      "target.impl.export.tip": "已支持课表信息导出，并对接学校系统待办任务的数据同步与导出链路。",
+      "target.impl.resource.title": "📚 共享资料数据库",
+      "target.impl.resource.desc": "支持上传与共享笔记、课件、试题等资料，形成可持续复用的学习资源池。",
+      "target.impl.resource.tip": "通过资源存储与元数据索引实现上传、筛选、检索和多用户复用。",
+      "target.plan.subtitle": "下一阶段目标",
+      "target.plan.cloud.title": "☁️ 后端迁移到微信云",
+      "target.plan.cloud.desc": "将本地后端迁移到微信云平台，完善线上部署能力，准备真实上线。",
+      "target.plan.cloud.tip": "重点是部署架构、密钥管理、可扩展调度与运维可观测性，保证上线后稳定运行。",
+      "target.plan.map.title": "🧭 课表接入地图导航",
+      "target.plan.map.desc": "把课表中的教室信息接入地图 API，提供到课教室的一键导航能力。",
+      "target.plan.map.tip": "涉及教室位置解析、地图标注生成与从课表条目直接发起路线导航。",
+      "target.plan.forum.title": "💬 校园协作论坛",
+      "target.plan.forum.desc": "建设发帖与互动能力，支持学生协作、师生科研/竞赛招募与匹配。",
+      "target.plan.forum.tip": "规划支持发帖、回复、标签与匹配场景：学生组队、老师招募、学生主动寻找科研/竞赛指导。",
+      "contrib.title": "🤝 系统贡献点",
+      "contrib.intro": "本项目是 vibe-coding + 人类审查的协作开发，并非完整自主开发。团队在需求分析、架构决策、成本控制和全链路测试上持续投入。直接把任务甩给 AI，无法产出这种前后端配合完整、可运行且可维护的系统。",
+      "contrib.tag.opensource": "完全开源",
+      "contrib.tag.complete": "功能完整的端到端基线",
+      "contrib.tag.fillgap": "弥补“西交小明”下线后的功能缺口",
+      "contrib.role.zhiyuan.title": "🧠 Zhiyuan Jiang — 项目统筹与 AI 工作流设计",
+      "contrib.role.zhiyuan.desc": "负责项目整体把控、前期 baseline 功能调研、AI skills 调研与 agent 部署尝试，以及功能测试统筹。",
+      "contrib.role.zhiyuan.tip": "重点包括：梳理需求基线；评估 /ui-ux-pro-max、/superpowers 等技能在 agent 流程中的可用性；组织上线前全链路验证。",
+      "contrib.role.frontend.title": "🎨 Yuexin Chen & Yuyang Xie — 前端开发",
+      "contrib.role.frontend.desc": "负责小程序核心页面与交互实现，把 UI 设计技能与实际前端经验结合，完成整套前端落地。",
+      "contrib.role.frontend.tip": "主要体现在 XJTUhub-main 的页面与交互实现：在 AI 辅助方案基础上进行工程化改造、联调与体验打磨。",
+      "contrib.role.xiang.title": "🕷️ Xiang Shi — 后端爬虫",
+      "contrib.role.xiang.desc": "负责后端爬虫流程与数据映射链路，支撑校园系统数据同步。",
+      "contrib.role.xiang.tip": "XJTU-API-main 中的抓取与同步逻辑，为成绩/课表/考勤等能力提供数据底座。",
+      "contrib.role.yifan.title": "🗃️ Yifan Shan — 数据库开发",
+      "contrib.role.yifan.desc": "负责数据库与资源数据层建设，支撑资料共享模块的持久化与检索。",
+      "contrib.role.yifan.tip": "重点包括资源元数据存储、查询与复用能力，保证共享资料模块可持续扩展。",
+      "contrib.skills.ui.title": "🧩 /ui-ux-pro-max 的实际用法",
+      "contrib.skills.ui.desc": "用于 UI 方案探索和快速迭代，再由前端同学结合真实实现约束进行二次优化。",
+      "contrib.skills.ui.tip": "它提升的是方案探索效率，最终质量依赖人工筛选、工程实现和可用性测试。",
+      "contrib.skills.super.title": "⚙️ /superpowers 的流程化交付",
+      "contrib.skills.super.desc": "用于组织规划、调试、验证与交付流程，在人类审核节点下提升开发稳定性。",
+      "contrib.skills.super.tip": "通过流程化技能链降低 AI 幻觉影响，确保实现始终对齐需求和验收标准。",
+      "contrib.process.title": "📋 先做需求调研，再分派 Agent",
+      "contrib.process.desc": "在任务分派前，团队先完成需求拆解、技术栈调研、可行性评估，并编写详细说明文档。",
+      "contrib.process.tip": "“先文档、后分派、全程审查”是项目能稳定落地完整前后端联动，而非碎片化产出的关键。",
+      "contrib.cost.title": "💰 成本与质量双控制",
+      "contrib.cost.desc": "项目总成本控制在 100 RMB 以内，明显低于预估的 200 RMB；所有功能上线前都经过团队联合测试和检查。",
+      "contrib.cost.tip": "成本来自前期边界规划与精准使用 agent；质量来自长期人类审核和跨成员联测，避免 AI 幻觉干扰。"
+    });
+
+    const KEY = "xjtuhub_home_lang"
+    const button = document.getElementById("lang-toggle")
+
+    function setLang(lang) {
+      const dict = I18N[lang] || I18N.en
+      document.documentElement.setAttribute("lang", lang === "zh" ? "zh-CN" : "en")
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.getAttribute("data-i18n")
+        if (dict[key]) {
+          el.textContent = dict[key]
+        }
+      })
+      document.querySelectorAll("[data-i18n-tip]").forEach((el) => {
+        const tipKey = el.getAttribute("data-i18n-tip")
+        const tipText = dict[tipKey]
+        if (tipText) {
+          el.setAttribute("data-tip", tipText)
+          el.setAttribute("title", tipText)
+          el.setAttribute("aria-label", tipText)
+        }
+      })
+      button.textContent = lang === "zh" ? "EN / 中文" : "中文 / EN"
+      localStorage.setItem(KEY, lang)
+    }
+
+    button.addEventListener("click", () => {
+      const current = localStorage.getItem(KEY) || "en"
+      setLang(current === "en" ? "zh" : "en")
+    })
+
+    const saved = localStorage.getItem(KEY) || "en"
+    setLang(saved)
+  })()
+</script>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 </body>
 </html>
