@@ -39,6 +39,9 @@
       <div class="navbar-item lang-switch-wrap">
         <button id="lang-toggle" class="button is-small is-rounded is-info is-light">中文 / EN</button>
       </div>
+      <div class="navbar-item theme-switch-wrap">
+        <button id="theme-toggle" class="button is-small is-rounded is-warning is-light" data-i18n="theme.toggle">Dark Mode</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -49,7 +52,7 @@
       <div class="columns is-centered">
         <div class="column has-text-centered">
           <div class="hero-logo-wrap">
-            <img src="./static/images/logo1.png" alt="XJTUhub Project Logo" class="hero-logo">
+            <img id="hero-logo" src="./static/images/logo1.png" alt="XJTUhub Project Logo" class="hero-logo">
           </div>
           <h1 class="title is-1 publication-title hero-title-text" data-i18n="hero.title">XJTUhub: Campus Learning Assistant for XJTU</h1>
           <p class="subtitle is-5" style="margin-top: 0.8rem;" data-i18n="hero.subtitle">
@@ -607,6 +610,8 @@
         "hero.repo": "Project Repo",
         "hero.branch": "Final Branch",
         "hero.details": "System Details",
+        "theme.toggle": "Dark Mode",
+        "theme.light": "Light Mode",
         "author.zhiyuan": "Zhiyuan Jiang",
         "author.xiang": "Xiang Shi",
         "author.yuexin": "Yuexin Chen",
@@ -717,6 +722,8 @@
         "hero.repo": "项目仓库",
         "hero.branch": "Final 分支",
         "hero.details": "系统细节",
+        "theme.toggle": "深色模式",
+        "theme.light": "浅色模式",
         "author.zhiyuan": "江知远",
         "author.xiang": "石翔",
         "author.yuexin": "陈粤鑫",
@@ -872,7 +879,9 @@
       "contrib.process.tip": "Human-led requirement docs and step-by-step task boundaries are key reasons this project reached stable full-stack integration instead of fragmented outputs.",
       "contrib.cost.title": "💰 Cost and Quality Governance",
       "contrib.cost.desc": "The total cost was controlled under 100 RMB (well below the expected 200 RMB), and every feature was reviewed and tested by the full team before release.",
-      "contrib.cost.tip": "Cost control came from scoped planning and targeted agent usage; quality came from long-cycle human review and cross-member testing before release."
+      "contrib.cost.tip": "Cost control came from scoped planning and targeted agent usage; quality came from long-cycle human review and cross-member testing before release.",
+      "theme.toggle": "Dark Mode",
+      "theme.light": "Light Mode"
     });
 
     Object.assign(I18N.zh, {
@@ -930,11 +939,38 @@
       "contrib.process.tip": "“先文档、后分派、全程审查”是项目能稳定落地完整前后端联动，而非碎片化产出的关键。",
       "contrib.cost.title": "💰 成本与质量双控制",
       "contrib.cost.desc": "项目总成本控制在 100 RMB 以内，明显低于预估的 200 RMB；所有功能上线前都经过团队联合测试和检查。",
-      "contrib.cost.tip": "成本来自前期边界规划与精准使用 agent；质量来自长期人类审核和跨成员联测，避免 AI 幻觉干扰。"
+      "contrib.cost.tip": "成本来自前期边界规划与精准使用 agent；质量来自长期人类审核和跨成员联测，避免 AI 幻觉干扰。",
+      "theme.toggle": "深色模式",
+      "theme.light": "浅色模式"
     });
 
-    const KEY = "xjtuhub_home_lang"
-    const button = document.getElementById("lang-toggle")
+    const LANG_KEY = "xjtuhub_home_lang"
+    const THEME_KEY = "xjtuhub_home_theme"
+    const langButton = document.getElementById("lang-toggle")
+    const themeButton = document.getElementById("theme-toggle")
+    const heroLogo = document.getElementById("hero-logo")
+
+    function getCurrentLang() {
+      return localStorage.getItem(LANG_KEY) || "en"
+    }
+
+    function getCurrentTheme() {
+      return localStorage.getItem(THEME_KEY) || "light"
+    }
+
+    function setTheme(theme) {
+      const nextTheme = theme === "dark" ? "dark" : "light"
+      const isDark = nextTheme === "dark"
+      document.body.classList.toggle("theme-dark", isDark)
+      if (heroLogo) {
+        heroLogo.src = isDark ? "./static/images/logo2.png" : "./static/images/logo1.png"
+      }
+      const dict = I18N[getCurrentLang()] || I18N.en
+      if (themeButton) {
+        themeButton.textContent = isDark ? (dict["theme.light"] || "Light Mode") : (dict["theme.toggle"] || "Dark Mode")
+      }
+      localStorage.setItem(THEME_KEY, nextTheme)
+    }
 
     function setLang(lang) {
       const dict = I18N[lang] || I18N.en
@@ -954,17 +990,29 @@
           el.setAttribute("aria-label", tipText)
         }
       })
-      button.textContent = lang === "zh" ? "EN / 中文" : "中文 / EN"
-      localStorage.setItem(KEY, lang)
+      if (langButton) {
+        langButton.textContent = lang === "zh" ? "EN / 中文" : "中文 / EN"
+      }
+      localStorage.setItem(LANG_KEY, lang)
+      setTheme(getCurrentTheme())
     }
 
-    button.addEventListener("click", () => {
-      const current = localStorage.getItem(KEY) || "en"
-      setLang(current === "en" ? "zh" : "en")
-    })
+    if (langButton) {
+      langButton.addEventListener("click", () => {
+        const current = getCurrentLang()
+        setLang(current === "en" ? "zh" : "en")
+      })
+    }
 
-    const saved = localStorage.getItem(KEY) || "en"
-    setLang(saved)
+    if (themeButton) {
+      themeButton.addEventListener("click", () => {
+        const current = getCurrentTheme()
+        setTheme(current === "dark" ? "light" : "dark")
+      })
+    }
+
+    setLang(getCurrentLang())
+    setTheme(getCurrentTheme())
   })()
 </script>
 
