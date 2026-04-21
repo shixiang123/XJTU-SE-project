@@ -1,5 +1,7 @@
 import {
-  getCourseListRequest
+  getCourseListRequest,
+  triggerXjtuCourseCrawlerRequest,
+  getXjtuCrawlerStatusRequest
 } from '../../api/main'
 import {
   getNowWeek
@@ -10,6 +12,13 @@ const courseColorCacheKey = "courseColor"
 const courseColorVersionKey = "courseColorVersion"
 const courseColorModeKey = "courseColorMode"
 const COURSE_COLOR_VERSION = 5
+const AUTO_CRAWLER_POLL_INTERVAL_MS = 1500
+const AUTO_CRAWLER_TIMEOUT_MS = 5 * 60 * 1000
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 Page({
 
   /**
@@ -59,6 +68,7 @@ Page({
     firstEntry: true,
     showCourseDetail: false,
     activeCourse: null,
+    loadingCourseSync: false,
     courseDetailRef: [{
         key: 'weekDay',
         title: '周几'
@@ -247,10 +257,65 @@ Page({
       }
       return
     }
-    this.updateFn(true)
+    this.setData({
+      courseList: [],
+      courseColor: {}
+    })
   },
 
   update() {
+    this.updateWithCrawler()
+  },
+
+  async waitCrawlerIdle(timeoutMs = AUTO_CRAWLER_TIMEOUT_MS) {
+    const start = Date.now()
+    while (Date.now() - start < timeoutMs) {
+      try {
+        const res = await getXjtuCrawlerStatusRequest()
+        const running = !!(res && res.data && res.data.running)
+        if (!running) return true
+      } catch (err) {
+        console.warn('[course] poll crawler status failed', err)
+      }
+      await sleep(AUTO_CRAWLER_POLL_INTERVAL_MS)
+    }
+    return false
+  },
+
+  async triggerCourseCrawler() {
+    const account = wx.getStorageSync('account') || {}
+    const stuId = String(account.stuId || '').trim()
+    const password = String(account.password || '').trim()
+    if (!stuId || !password) {
+      wx.showToast({
+        title: '请先登录后再更新',
+        icon: 'none'
+      })
+      return false
+    }
+    try {
+      this.setData({ loadingCourseSync: true })
+      const res = await triggerXjtuCourseCrawlerRequest({ stuId, password })
+      const started = !!(res && res.data && (res.data.started || res.data.running))
+      if (started) {
+        await this.waitCrawlerIdle()
+      }
+      return true
+    } catch (err) {
+      console.warn('[course] trigger crawler failed', err)
+      wx.showToast({
+        title: '触发课表爬取失败',
+        icon: 'none'
+      })
+      return false
+    } finally {
+      this.setData({ loadingCourseSync: false })
+    }
+  },
+
+  async updateWithCrawler() {
+    const ok = await this.triggerCourseCrawler()
+    if (!ok) return
     this.updateFn()
   },
 

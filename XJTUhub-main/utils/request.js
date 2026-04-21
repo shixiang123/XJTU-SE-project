@@ -23,6 +23,13 @@ function withLocalhost(baseUrl) {
   return String(baseUrl || "").replace(/^http:\/\/192\.168\.\d+\.\d+/i, "http://127.0.0.1")
 }
 
+function getRuntimeBaseUrl() {
+  const appBaseUrl =
+    app && typeof app.getConfig === "function" ? String(app.getConfig("baseUrl") || "") : ""
+  const lanBaseUrl = String(wx.getStorageSync("lanBaseUrl") || "").trim()
+  return lanBaseUrl || appBaseUrl
+}
+
 function runRequest({
   url,
   method,
@@ -60,7 +67,7 @@ export default function createRequest(options = {}) {
       return
     }
 
-    const baseUrl = app.getConfig("baseUrl")
+    const baseUrl = getRuntimeBaseUrl()
     const originUrl = `${baseUrl}${options.url}`
     const method = options.method || "GET"
     const timeout = options.timeout || 20000

@@ -6,11 +6,13 @@ if (envVersion === "release" && env !== "production") {
   env = "production"
 }
 
+// Default LAN backend for real device debugging (can still be overridden by storage lanBaseUrl).
+const fallbackDevelopUrl = "http://192.168.1.107:3000"
+
 export default {
   env,
   baseUrl: {
-    // WeChat DevTools on local machine: use localhost to avoid LAN proxy 502.
-    develop: "http://127.0.0.1:3000",
+    develop: fallbackDevelopUrl,
     production: "http://api.xxx.com",
   },
 }

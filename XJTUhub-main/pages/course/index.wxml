@@ -22,6 +22,7 @@
     </view>
   </cu-custom>
   <view class="container ios-page {{pageReady ? 'is-ready' : ''}}">
+    <view wx:if="{{loadingCourseSync}}" class="loading-tip">正在加载课表信息...</view>
     <view class="week-list">
       <view class="now-month">
         <text>{{nowMonth < 10 ? '0' + nowMonth : nowMonth}}</text>

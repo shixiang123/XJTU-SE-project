@@ -1,11 +1,18 @@
 import createRequest from '../utils/request'
 
+function getBaseUrl() {
+  const appBaseUrl = String((getApp() && getApp().getConfig('baseUrl')) || '')
+  const lanBaseUrl = String(wx.getStorageSync('lanBaseUrl') || '').trim()
+  return lanBaseUrl || appBaseUrl
+}
+
 export function loginRequest(data) {
   return createRequest({
     url: '/login',
     method: 'POST',
     data,
-    needLogin: false
+    needLogin: false,
+    loading: false
   })
 }
 
@@ -19,6 +26,13 @@ export function getScoreListRequest(data) {
 export function getRawScoreListRequest(data) {
   return createRequest({
     url: '/raw-scores',
+    data
+  })
+}
+
+export function getAttendanceListRequest(data) {
+  return createRequest({
+    url: '/attendance',
     data
   })
 }
@@ -39,22 +53,123 @@ export function getResourceListRequest(data) {
   })
 }
 
+export function uploadResourceFileRequest({
+  filePath = '',
+  course = '未分类课程',
+  name = 'file',
+  displayName = ''
+} = {}) {
+  return new Promise((resolve, reject) => {
+    const baseUrl = getBaseUrl()
+    const token = wx.getStorageSync('token') || ''
+    wx.uploadFile({
+      url: `${baseUrl}/resources/upload`,
+      filePath,
+      name,
+      formData: { course, displayName },
+      header: {
+        token
+      },
+      success: (res) => {
+        try {
+          const data = JSON.parse(res.data || '{}')
+          if (data && Number(data.code) === 0) {
+            resolve(data)
+            return
+          }
+          reject(new Error((data && data.msg) || 'UPLOAD_FAILED'))
+        } catch (err) {
+          reject(err)
+        }
+      },
+      fail: (err) => reject(err)
+    })
+  })
+}
+
+export function deleteResourceFileRequest(id) {
+  return createRequest({
+    url: `/resources/${encodeURIComponent(id)}`,
+    method: 'DELETE'
+  })
+}
+
 export function triggerXjtuCrawlerRequest(data) {
   return createRequest({
     url: '/crawl/xjtu/trigger',
     method: 'POST',
-    data
+    data,
+    loading: false
+  })
+}
+
+export function triggerXjtuCourseCrawlerRequest(data) {
+  return createRequest({
+    url: '/crawl/xjtu/course/trigger',
+    method: 'POST',
+    data,
+    loading: false
+  })
+}
+
+export function triggerXjtuScoreCrawlerRequest(data) {
+  return createRequest({
+    url: '/crawl/xjtu/score/trigger',
+    method: 'POST',
+    data,
+    loading: false
   })
 }
 
 export function getXjtuCrawlerStatusRequest(data) {
   return createRequest({
     url: '/crawl/xjtu/status',
+    data,
+    loading: false
+  })
+}
+
+export function triggerSyxtDdlCrawlerRequest(data) {
+  return createRequest({
+    url: '/crawl/syxt/ddl/trigger',
+    method: 'POST',
+    data,
+    loading: false
+  })
+}
+
+export function getSyxtDdlCrawlerStatusRequest(data) {
+  return createRequest({
+    url: '/crawl/syxt/ddl/status',
+    data,
+    loading: false
+  })
+}
+
+export function triggerXjtuAttendanceCrawlerRequest(data) {
+  return createRequest({
+    url: '/crawl/xjtu/attendance/trigger',
+    method: 'POST',
+    data,
+    loading: false
+  })
+}
+
+export function getXjtuAttendanceCrawlerStatusRequest(data) {
+  return createRequest({
+    url: '/crawl/xjtu/attendance/status',
+    data,
+    loading: false
+  })
+}
+
+export function getDdlListRequest(data) {
+  return createRequest({
+    url: '/ddl',
     data
   })
 }
 
-// 初始化登录（仅限有验证码的教务系统）
 export function initLoginRequest(data) {
   return createRequest({
     url: '/login-init',
@@ -63,12 +178,12 @@ export function initLoginRequest(data) {
   })
 }
 
-// 登录（需要验证码的情况）
 export function loginWithVerifyRequest(data) {
   return createRequest({
     url: '/login-verify',
     method: 'POST',
     data,
-    needLogin: false
+    needLogin: false,
+    loading: false
   })
 }

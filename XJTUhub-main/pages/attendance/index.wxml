@@ -5,25 +5,83 @@
   </cu-custom>
 
   <view class="container ios-page {{pageReady ? 'is-ready' : ''}}">
-    <view class="tips card-shell">当前为初版演示数据，后续可接入教务考勤接口。</view>
+    <view wx:if="{{loadingAttendanceSync}}" class="loading-tip card-shell">正在加载考勤信息...</view>
+
+    <view class="header card-shell">
+      <view class="header-title">考勤明细</view>
+      <view class="update-btn ios-tap {{loadingAttendanceSync || loadingRemote ? 'is-loading' : ''}}" bindtap="onRefreshTap">
+        <text class="cuIcon-refresh"></text>
+      </view>
+    </view>
+
+    <view class="tips card-shell">展示本周/本月/本学期考勤详情，按风险优先排序。</view>
+
+    <view class="summary card-shell">
+      <view class="summary-row summary-head">
+        <view class="summary-title">总览</view>
+        <view class="summary-rate">到课率 {{summary.attendanceRate || '--'}}</view>
+      </view>
+      <view class="summary-grid">
+        <view class="summary-cell">
+          <view class="summary-label">应到</view>
+          <view class="summary-value">{{summary.shouldAttend || 0}}</view>
+        </view>
+        <view class="summary-cell">
+          <view class="summary-label">实到</view>
+          <view class="summary-value">{{summary.actualAttend || 0}}</view>
+        </view>
+        <view class="summary-cell">
+          <view class="summary-label">正常</view>
+          <view class="summary-value">{{summary.normalCount || 0}}</view>
+        </view>
+        <view class="summary-cell">
+          <view class="summary-label">迟到</view>
+          <view class="summary-value">{{summary.late || 0}}</view>
+        </view>
+        <view class="summary-cell">
+          <view class="summary-label">请假</view>
+          <view class="summary-value">{{summary.leave || 0}}</view>
+        </view>
+        <view class="summary-cell">
+          <view class="summary-label">缺勤</view>
+          <view class="summary-value danger">{{summary.absences || 0}}</view>
+        </view>
+      </view>
+      <view wx:if="{{fetchedAtText}}" class="summary-time">更新时间：{{fetchedAtText}}</view>
+    </view>
+
+    <view class="tabs card-shell">
+      <view class="tab {{termTab === 'week' ? 'active' : ''}}" data-tab="week" bindtap="onTabChange">本周</view>
+      <view class="tab {{termTab === 'month' ? 'active' : ''}}" data-tab="month" bindtap="onTabChange">本月</view>
+      <view class="tab {{termTab === 'term' ? 'active' : ''}}" data-tab="term" bindtap="onTabChange">本学期</view>
+    </view>
 
     <view class="list">
-      <view class="item card-shell ios-tap" wx:for="{{list}}" wx:key="courseName">
+      <view class="item card-shell ios-tap" wx:for="{{list}}" wx:key="id">
         <view class="item-header">
           <view class="course-name">{{item.courseName}}</view>
           <view class="risk {{item.risk}}">
             {{item.risk == 'danger' ? '高风险' : (item.risk == 'warning' ? '预警' : '正常')}}
           </view>
         </view>
-        <view class="meta">任课老师：{{item.teacher}}</view>
-        <view class="stats">
-          <view>缺勤：{{item.absences}}</view>
-          <view>迟到：{{item.late}}</view>
-          <view>请假：{{item.leave}}</view>
+        <view class="meta">{{item.term || '本学期'}}</view>
+
+        <view class="stats-grid">
+          <view>应到：{{item.shouldAttend || 0}}</view>
+          <view>实到：{{item.actualAttend || 0}}</view>
+          <view>正常：{{item.normalCount || 0}}</view>
+          <view>迟到：{{item.late || 0}}</view>
+          <view>请假：{{item.leave || 0}}</view>
+          <view>缺勤：{{item.absences || 0}}</view>
+          <view class="rate">到课率：{{item.attendanceRate || '--'}}</view>
         </view>
       </view>
     </view>
 
-    <button class="cu-btn sync-btn ios-btn" bindtap="mockSync">重新同步演示数据</button>
+    <view wx:if="{{!list.length}}" class="empty card-shell">暂无考勤数据</view>
+
+    <button class="cu-btn sync-btn ios-btn" bindtap="onRefreshTap" loading="{{loadingRemote}}">
+      {{loadingAttendanceSync || loadingRemote ? '同步中...' : '刷新考勤数据'}}
+    </button>
   </view>
 </view>

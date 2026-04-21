@@ -1,11 +1,27 @@
 import {
   initLoginRequest,
-  loginWithVerifyRequest,
-  triggerXjtuCrawlerRequest,
+  loginWithVerifyRequest
 } from "../../api/main"
 import { redirectAfterLogin } from "../../utils/auth"
 
 const app = getApp()
+
+function getRuntimeBaseUrl() {
+  const appBaseUrl = String((app && app.getConfig && app.getConfig("baseUrl")) || "")
+  const lanBaseUrl = String(wx.getStorageSync("lanBaseUrl") || "").trim()
+  return lanBaseUrl || appBaseUrl
+}
+
+function showSyncLoading(title = "同步中...") {
+  wx.showLoading({
+    title,
+    mask: true
+  })
+}
+
+function hideSyncLoading() {
+  wx.hideLoading()
+}
 
 Page({
   data: {
@@ -16,14 +32,14 @@ Page({
     showVerify: false,
     redirect: "",
     themeMode: "light",
-    pageReady: false,
+    pageReady: false
   },
 
   onLoad(options) {
-    const baseUrl = app.getConfig("baseUrl")
+    const baseUrl = getRuntimeBaseUrl()
     this.setData({
       baseUrl,
-      redirect: options.redirect ? decodeURIComponent(options.redirect) : "",
+      redirect: options.redirect ? decodeURIComponent(options.redirect) : ""
     })
     this.initAccount()
     this.initLogin()
@@ -31,7 +47,7 @@ Page({
 
   onShow() {
     this.setData({
-      themeMode: app.getThemeMode(),
+      themeMode: app.getThemeMode()
     })
     this.runPageEnterAnimation()
   },
@@ -52,26 +68,26 @@ Page({
     const accountCache = wx.getStorageSync("account")
     if (accountCache) {
       this.setData({
-        ...accountCache,
+        ...accountCache
       })
     }
   },
 
   onStuIdInput(e) {
     this.setData({
-      stuId: e.detail.value || "",
+      stuId: e.detail.value || ""
     })
   },
 
   onPasswordInput(e) {
     this.setData({
-      password: e.detail.value || "",
+      password: e.detail.value || ""
     })
   },
 
   onVerifyCodeInput(e) {
     this.setData({
-      verifyCode: e.detail.value || "",
+      verifyCode: e.detail.value || ""
     })
   },
 
@@ -80,7 +96,7 @@ Page({
       .then((res) => {
         this.setData({
           initData: res.data,
-          showVerify: true,
+          showVerify: true
         })
         this.downloadVerifyImg()
       })
@@ -96,16 +112,16 @@ Page({
       url,
       success: (res) => {
         this.setData({
-          verifyImageUrl: res.tempFilePath,
+          verifyImageUrl: res.tempFilePath
         })
       },
       fail: (err) => {
         console.warn("[login-verify] download captcha failed", err)
-      },
+      }
     })
   },
 
-  login() {
+  async login() {
     const stuId = String(this.data.stuId || "").trim()
     const password = String(this.data.password || "").trim()
     const verifyCode = String(this.data.verifyCode || "").trim()
@@ -113,21 +129,21 @@ Page({
     if (!stuId) {
       wx.showToast({
         title: "请输入学号",
-        icon: "none",
+        icon: "none"
       })
       return
     }
     if (!password) {
       wx.showToast({
         title: "请输入密码",
-        icon: "none",
+        icon: "none"
       })
       return
     }
     if (this.data.showVerify && !verifyCode) {
       wx.showToast({
         title: "请输入验证码",
-        icon: "none",
+        icon: "none"
       })
       return
     }
@@ -137,70 +153,52 @@ Page({
       password,
       verifyCode,
       cookie: this.data.initData && this.data.initData.cookie,
-      formData: JSON.stringify((this.data.initData && this.data.initData.formData) || {}),
+      formData: JSON.stringify((this.data.initData && this.data.initData.formData) || {})
     }
 
-    console.log("[login-verify] submit", {
-      stuIdLen: stuId.length,
-      hasPassword: !!password,
-      hasVerifyCode: !!verifyCode,
-      hasCookie: !!postData.cookie,
-    })
+    showSyncLoading("登录中...")
 
-    wx.showLoading({
-      title: "登录中",
-    })
-
-    loginWithVerifyRequest(postData)
-      .then((res) => {
-        console.log("[login-verify] response", {
-          code: res && res.code,
-          hasCookie: !!(res && res.data && res.data.cookie),
-        })
-        wx.hideLoading()
-        if (res.code == -1) {
-          wx.showToast({
-            title: res.msg,
-            icon: "none",
-          })
-          return
-        }
-
-        wx.setStorageSync("token", res.data.cookie)
-        if (this.data.saveCount) {
-          wx.setStorageSync("account", {
-            stuId,
-            password,
-          })
-        } else {
-          wx.removeStorageSync("account")
-        }
-
-        triggerXjtuCrawlerRequest({ stuId, password }).catch((err) => {
-          console.warn("[login-verify] trigger crawler failed", err)
-        })
-
+    try {
+      const res = await loginWithVerifyRequest(postData)
+      if (res.code == -1) {
+        hideSyncLoading()
         wx.showToast({
-          title: "登录成功",
-          icon: "none",
+          title: res.msg,
+          icon: "none"
         })
-        setTimeout(() => {
-          redirectAfterLogin(this.data.redirect)
-        }, 1500)
-      })
-      .catch((err) => {
-        console.error("[login-verify] request failed", err)
-        wx.hideLoading()
-        wx.showToast({
-          title: `登录失败: ${err && err.message ? err.message : "UNKNOWN_ERROR"}`,
-          icon: "none",
+        return
+      }
+
+      wx.setStorageSync("token", res.data.cookie)
+      if (this.data.saveCount) {
+        wx.setStorageSync("account", {
+          stuId,
+          password
         })
+      } else {
+        wx.removeStorageSync("account")
+      }
+      hideSyncLoading()
+
+      wx.showToast({
+        title: "登录成功",
+        icon: "none"
       })
+      setTimeout(() => {
+        redirectAfterLogin(this.data.redirect)
+      }, 500)
+    } catch (err) {
+      hideSyncLoading()
+      wx.showToast({
+        title: `登录失败: ${err && err.message ? err.message : "UNKNOWN_ERROR"}`,
+        icon: "none"
+      })
+    }
   },
 
   switchStatus() {
     this.setData({
-      saveCount: !this.data.saveCount,
+      saveCount: !this.data.saveCount
     })
   },
 
@@ -208,12 +206,12 @@ Page({
     const pages = getCurrentPages()
     if (pages.length > 1) {
       wx.navigateBack({
-        delta: 1,
+        delta: 1
       })
       return
     }
     wx.switchTab({
-      url: "/pages/index/index",
+      url: "/pages/index/index"
     })
-  },
+  }
 })

@@ -1,159 +1,187 @@
 # XJTUhub
 
-西安交通大学校园学习助手微信小程序（当前仓库为前端小程序工程）。
+XJTUhub 是一个面向西安交通大学场景的微信小程序 + Node.js 后端项目，核心目标是把教务与学习常用信息整合到一个统一入口中。
 
-项目聚焦于同学常用的教务与学习场景，提供登录、课表、成绩、资料浏览、DDL 提醒、考勤查看等能力，并支持浅色主题与自定义 TabBar。
+当前版本已完成：
+- 账号登录与会话鉴权
+- 课表查询、成绩查询（含原始小分明细）
+- DDL 抓取与勾选管理
+- 考勤抓取与分维度展示（本周/本月/本学期）
+- 课程资料共享（上传/列表/下载/删除）
+- MongoDB 数据源接入（支持 JSON 与 Mongo 双模式）
 
-## 主要功能
-
-- 登录能力
-	- 普通登录：学号 + 密码
-	- 验证码登录：支持初始化登录态、拉取验证码并提交登录
-	- 登录态管理：未登录自动跳转登录，登录后支持回跳
-- 课表
-	- 周视图课表
-	- 当前周自动计算
-	- 课程详情弹窗（教师、地点、周次、节次、学分等）
-	- 本地缓存与手动更新
-- 成绩
-	- 按学期切换成绩
-	- 成绩详情（有效成绩 + 原始成绩明细）
-	- 本地缓存与手动更新
-- 资料广场（首页）
-	- 分类筛选（课件/笔记/试题）
-	- 关键词搜索
-	- 分页加载
-	- 接口不可用时自动回退到本地示例数据
-- 功能聚合页
-	- 快速进入：成绩、考勤、DDL
-- 考勤与 DDL
-	- 当前版本使用本地示例数据与本地缓存
-	- 支持 DDL 勾选完成状态
-- 个人中心
-	- 登录状态展示
-	- 常用功能快捷入口
-	- 退出登录
-
-## 技术栈
-
-- 微信小程序原生框架
-- Vant Weapp（已集成到项目）
-- ColorUI（样式与图标）
-- 统一请求封装（token 鉴权 + 错误码处理 + 登录态跳转）
-
-## 目录概览
+## 项目结构
 
 ```text
-api/                 接口定义
-custom-tab-bar/      自定义 TabBar
-docs/                后端对接规范等文档
-pages/               页面代码
-	index/             首页（资料广场）
-	login/             普通登录
-	login-verify/      验证码登录
-	course/            课表
-	score/             成绩
-	function/          功能聚合
-	attendance/        考勤（当前为本地示例数据）
-	ddl/               DDL（当前为本地示例数据）
-	mine/              个人中心
-utils/               工具与请求封装
-config.js            环境与接口地址配置
-app.json             全局页面与 TabBar 配置
+XJTUhub-main/     微信小程序前端
+XJTU-API-main/    Node.js 后端 API + 爬虫
+README.md         项目总说明（本文件）
 ```
 
-## 快速开始
+## 核心功能
 
-### 1. 环境准备
+1. 登录与鉴权
+- 前端输入学号和密码，调用 `POST /login` 获取本地 token。
+- token 格式为 `xjtu-<stuId>-...`，后端通过请求头 `token` 完成业务鉴权与用户隔离。
 
-- 安装 Node.js（建议 LTS）
-- 安装微信开发者工具
-- 准备可用后端服务（本地或远程）
+2. 课表与成绩
+- 支持分别触发课表爬虫、成绩爬虫，避免耦合。
+- 成绩包含有效成绩与原始分项（平时/期中/期末/综合等），支持按学分加权均分计算。
 
-### 2. 安装依赖
+3. DDL
+- 可触发 LMS（SYXT）DDL 抓取。
+- 支持前端勾选完成状态。
+- 在 Mongo 模式下，DDL 勾选状态可持久化。
+
+4. 考勤
+- 支持触发考勤系统（BKKQ）抓取。
+- 展示本周/本月/本学期分类数据与汇总指标。
+
+5. 资料共享
+- 支持文件上传到后端公共目录、分页列表、下载。
+- 仅发布者可删除自己上传的文件。
+- 支持常见课件/压缩包/文档格式。
+
+## 数据库接入与数据管线（Pipeline）
+
+### 1) 数据源模式
+
+后端通过环境变量 `DATA_SOURCE` 控制数据源：
+- `json`：读取本地 `output/*.json` 文件（默认）
+- `mongo`：优先读写 MongoDB（不可用时回退到本地）
+
+关键实现位于：
+- `XJTU-API-main/db/mongo.js`
+- `XJTU-API-main/services/crawlerDataService.js`
+
+### 2) Mongo 连接与索引初始化
+
+后端启动时会尝试连接 Mongo，并自动创建索引：
+- `crawler_data`（课表/成绩聚合数据）
+- `ddls`（DDL 列表与勾选状态）
+- `resources`（资料元信息索引预留）
+
+对应代码：
+- `XJTU-API-main/app.js`
+- `XJTU-API-main/repositories/*.js`
+
+### 3) 课表/成绩爬取与入库链路
+
+链路如下：
+1. 前端点击刷新（课表页或成绩页）
+2. 调用：
+   - `POST /crawl/xjtu/course/trigger`（仅课表）
+   - `POST /crawl/xjtu/score/trigger`（仅成绩）
+3. 后端子进程运行 `scripts/xjtu-ehall-crawler.js`
+4. 爬虫输出到 `output/xjtu-ehall.json`
+5. 后端在任务成功后调用 `syncLatestCrawlerOutputToMongo(stuId)`，将映射后的 `courseList/scoreList/rawScoreList` 写入 Mongo
+6. 前端轮询 `GET /crawl/xjtu/status`，任务结束后请求 `GET /courses`、`GET /scores`、`GET /raw-scores`
+
+说明：
+- Mongo 模式下，`/courses` 和 `/scores` 会按 token 中 `stuId` 读取各自数据。
+- JSON 模式下，读取本地 output 文件映射结果。
+
+### 4) DDL 链路
+
+1. 前端触发 `POST /crawl/syxt/ddl/trigger`
+2. 爬虫脚本 `scripts/xjtu-syxt-ddl-crawler.js` 生成 `output/xjtu-syxt-ddl-<stuId>.json`
+3. `GET /ddl` 优先读取 Mongo（若启用）；没有则读 output 文件并可回写 Mongo
+4. `PATCH /ddl/:id` 更新 done 状态（Mongo 模式持久化，否则内存态）
+
+### 5) 考勤链路
+
+1. 前端触发 `POST /crawl/xjtu/attendance/trigger`
+2. 爬虫脚本 `scripts/xjtu-bkkq-crawler.js` 生成 `output/xjtu-bkkq-attendance-<stuId>.json`
+3. `GET /attendance` 返回标准化后的：
+   - `list`
+   - `byTab`（week/month/term）
+   - `summary`
+   - `rawTables`
+
+### 6) 资料共享链路
+
+1. 前端 `wx.uploadFile` 到 `POST /resources/upload`
+2. 后端保存到 `XJTU-API-main/public/materials/`
+3. 元信息写入 `.meta.json`（显示名、上传者等）
+4. `GET /resources` 分页返回列表
+5. `DELETE /resources/:id` 仅允许上传者删除
+6. 通过 `/materials/*` 下载（后端设置附件下载头）
+
+## 项目特点
+
+1. 面向单校场景深度适配
+- 围绕 XJTU 的 ehall、LMS、BKKQ 业务流程做了专门爬取适配。
+
+2. 模块化爬取触发
+- 课表和成绩已拆分为独立触发接口，刷新互不影响，链路更稳定。
+
+3. 数据源可切换
+- 支持 JSON 与 Mongo 双模式；Mongo 不可用时可平滑回退，保证基本可用性。
+
+4. 用户维度数据隔离
+- token 中携带 `stuId`，课表/成绩/DDL/考勤按用户维度读取对应数据快照。
+
+5. 前后端协同加载体验
+- 前端有本地缓存、刷新状态与轮询机制；爬取过程中可持续显示加载状态。
+
+## 快速启动
+
+### 1) 启动后端
 
 ```bash
+cd XJTU-API-main
 npm install
+npm start
 ```
 
-### 3. 导入项目
+默认监听 `0.0.0.0:3000`。
 
-使用微信开发者工具打开本项目根目录。
+### 2) （可选）启用 Mongo
 
-### 4. 构建 npm
+在 `XJTU-API-main/.env` 配置：
 
-在微信开发者工具中执行「工具 -> 构建 npm」，确保 Vant Weapp 组件可用。
-
-### 5. 配置接口地址
-
-修改 `config.js` 中的环境与地址：
-
-```js
-let env = "develop"
-
-export default {
-	env,
-	baseUrl: {
-		develop: 'http://localhost:3000',
-		production: 'http://api.xxx.com',
-	}
-}
+```env
+DATA_SOURCE=mongo
+MONGO_URI=mongodb://127.0.0.1:27017
+MONGO_DB_NAME=xjtuhub
 ```
 
-说明：发布环境下会自动保护性切到 production，避免误用开发地址。
+如需把现有 JSON 快照迁移到 Mongo：
 
-## 登录与测试账号
-
-登录页默认填充测试账号：
-
-- stuId: test
-- password: 123456
-
-是否可直接登录取决于你当前接入的后端是否提供对应测试账户。
-
-## 当前接口清单
-
-前端已对接接口（见 `api/main.js`）：
-
-- POST /login
-- GET /login-init
-- POST /login-verify
-- GET /courses
-- GET /scores
-- GET /raw-scores
-- GET /resources
-
-统一响应结构：
-
-```json
-{
-	"code": 0,
-	"msg": "ok",
-	"data": {}
-}
+```bash
+npm run migrate:mongo
 ```
 
-错误码约定：
+### 3) 启动前端（微信开发者工具）
 
-- code = 0：成功
-- code = -1：业务失败（前端 toast 显示 msg）
-- code = 403：登录失效（前端跳转登录）
+1. 导入 `XJTUhub-main`
+2. 构建 npm
+3. 确认 `XJTUhub-main/config.js` 的后端地址可访问
+4. 真机调试时可设置：
+   - `wx.setStorageSync('lanBaseUrl', 'http://<你的局域网IP>:3000')`
 
-## 数据来源说明
+## 常用接口一览
 
-- 课表、成绩、资料：优先走后端接口
-- 考勤、DDL：当前为本地示例数据（后续可对接实时接口）
-- 首页资料：请求超时会自动回退示例数据，保证页面可用
-
-## 相关文档
-
-- 后端实时化与多学校爬取规范：`docs/backend-realtime-crawler-spec.md`
-- 配套文章：
-	- [1.项目环境搭建](articles/1.项目环境搭建.md)
-	- [2.小程序登录功能开发](articles/2.小程序登录功能开发.md)
-	- [3.封装请求函数](articles/3.封装请求函数.md)
-	- [4.环境变量配置](articles/4.环境变量配置.md)
+- `POST /login`
+- `GET /courses`
+- `GET /scores`
+- `GET /raw-scores`
+- `GET /attendance`
+- `GET /ddl`
+- `PATCH /ddl/:id`
+- `GET /resources`
+- `POST /resources/upload`
+- `DELETE /resources/:id`
+- `POST /crawl/xjtu/course/trigger`
+- `POST /crawl/xjtu/score/trigger`
+- `GET /crawl/xjtu/status`
+- `POST /crawl/xjtu/attendance/trigger`
+- `GET /crawl/xjtu/attendance/status`
+- `POST /crawl/syxt/ddl/trigger`
+- `GET /crawl/syxt/ddl/status`
 
 ## 说明
 
-本仓库为前端小程序工程，后端服务需自行部署或接入现有服务后使用。
+- 本项目为学习与个人项目用途，非学校官方系统。
+- 爬虫能力依赖目标网站页面结构，目标系统变更后需同步维护脚本。
+

@@ -6,6 +6,14 @@ page {
   padding: 20rpx;
 }
 
+.loading-tip {
+  margin-bottom: 14rpx;
+  padding: 16rpx 20rpx;
+  color: var(--theme);
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
 .card-shell {
   border-radius: 20rpx;
   border: 1rpx solid var(--border-color);
@@ -43,6 +51,40 @@ page {
   padding: 30rpx;
 }
 
+.avg-panel {
+  margin-top: 16rpx;
+  padding: 20rpx;
+}
+
+.avg-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.avg-title {
+  color: var(--text-secondary);
+  font-size: 24rpx;
+}
+
+.avg-value {
+  color: var(--theme);
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.avg-btn {
+  margin-top: 14rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 14rpx;
+  background: var(--theme);
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
 .term-name {
   font-size: 32rpx;
   color: var(--text-primary);
@@ -63,6 +105,18 @@ page {
   padding: 10rpx 0;
 }
 
+.score-item__left {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  min-width: 0;
+  flex: 1;
+}
+
+.score-checkbox {
+  transform: scale(0.9);
+}
+
 .score-item:not(:last-child) {
   border-bottom: 1rpx solid var(--border-color);
 }
@@ -70,12 +124,14 @@ page {
 .course-name {
   font-size: 30rpx;
   color: var(--text-primary);
+  min-width: 0;
 }
 
 .score-item__hint {
   margin-top: 6rpx;
   font-size: 22rpx;
   color: var(--text-secondary);
+  line-height: 1.45;
 }
 
 .course-score {
@@ -96,6 +152,10 @@ page {
   align-items: center;
   font-size: 36rpx;
   color: var(--theme);
+}
+
+.update-btn.is-loading {
+  opacity: 0.6;
 }
 
 .score-detail {

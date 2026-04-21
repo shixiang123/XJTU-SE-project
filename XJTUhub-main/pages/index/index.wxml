@@ -6,7 +6,7 @@
     <view class="hero card">
       <view class="hero-left">
         <view class="hero-title">课程资料共享</view>
-        <view class="hero-subtitle">课件 · 笔记 · 真题一站式浏览</view>
+        <view class="hero-subtitle">课件 / 笔记 / 试题一站式浏览</view>
       </view>
       <view class="hero-icon cuIcon-copy"></view>
     </view>
@@ -26,6 +26,45 @@
         <text wx:if="{{keywordInput}}" class="search-clear cuIcon-close" bindtap="clearSearch"></text>
       </view>
       <view class="search-btn ios-tap" bindtap="doSearch">搜索</view>
+    </view>
+
+    <view class="upload-wrap card">
+      <view class="upload-title">导入文件</view>
+      <view class="upload-subtitle">小程序不支持拖拽文件，点击按钮后可从本地选择并上传，上传后所有用户可见。</view>
+      <view class="upload-row">
+        <input
+          class="upload-course-input"
+          placeholder="输入课程名称（可选）"
+          placeholder-class="search-placeholder"
+          value="{{uploadCourse}}"
+          bindinput="onUploadCourseInput"
+        />
+        <button
+          class="upload-btn ios-tap"
+          loading="{{isUploading}}"
+          disabled="{{isUploading}}"
+          bindtap="chooseAndUploadResource"
+        >
+          {{isUploading ? '上传中...' : '选择并上传'}}
+        </button>
+      </view>
+    </view>
+
+    <view wx:if="{{downloadTipVisible}}" class="download-tip card">
+      <view class="download-tip-title">{{downloadTipTitle}}</view>
+      <view class="download-tip-hint">{{downloadTipHint}}</view>
+      <textarea
+        class="download-tip-path"
+        value="{{downloadTipPath}}"
+        disabled="true"
+        selectable="true"
+        maxlength="-1"
+        auto-height="true"
+      />
+      <view class="download-tip-actions">
+        <button class="download-tip-btn secondary" bindtap="closeDownloadTip">关闭</button>
+        <button class="download-tip-btn primary" bindtap="copyDownloadPath">复制路径</button>
+      </view>
     </view>
 
     <view class="category-list card">
@@ -55,7 +94,17 @@
       >
         <view class="resource-top">
           <view class="resource-title">{{item.title}}</view>
-          <view class="resource-tag">{{item.typeText}}</view>
+          <view class="resource-actions">
+            <view class="resource-tag">{{item.typeText}}</view>
+            <view
+              wx:if="{{item.canDelete}}"
+              class="delete-tag ios-tap"
+              data-id="{{item.id}}"
+              catchtap="deleteResource"
+            >
+              删除
+            </view>
+          </view>
         </view>
         <view class="resource-desc">{{item.desc}}</view>
         <view class="resource-meta">

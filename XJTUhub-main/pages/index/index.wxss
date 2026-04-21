@@ -95,6 +95,112 @@
   justify-content: center;
 }
 
+.upload-wrap {
+  margin-top: 16rpx;
+  padding: 18rpx;
+}
+
+.upload-title {
+  color: var(--text-primary);
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.upload-subtitle {
+  margin-top: 6rpx;
+  color: var(--text-secondary);
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.upload-row {
+  margin-top: 14rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.upload-course-input {
+  height: 68rpx;
+  flex: 1;
+  border-radius: 16rpx;
+  background: var(--surface-soft);
+  color: var(--text-primary);
+  font-size: 24rpx;
+  padding: 0 16rpx;
+}
+
+.upload-btn {
+  height: 68rpx;
+  min-width: 200rpx;
+  border-radius: 16rpx;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-tip {
+  margin-top: 16rpx;
+  padding: 18rpx;
+}
+
+.download-tip-title {
+  color: var(--text-primary);
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.download-tip-hint {
+  margin-top: 8rpx;
+  color: var(--text-secondary);
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
+.download-tip-path {
+  margin-top: 12rpx;
+  width: 100%;
+  min-height: 120rpx;
+  border-radius: 16rpx;
+  background: var(--surface-soft);
+  color: var(--text-primary);
+  font-size: 22rpx;
+  line-height: 1.5;
+  padding: 14rpx 16rpx;
+  box-sizing: border-box;
+}
+
+.download-tip-actions {
+  margin-top: 12rpx;
+  display: flex;
+  gap: 10rpx;
+}
+
+.download-tip-btn {
+  flex: 1;
+  height: 64rpx;
+  border-radius: 14rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-tip-btn.primary {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.download-tip-btn.secondary {
+  background: var(--surface-soft);
+  color: var(--text-primary);
+}
+
 .category-list {
   margin-top: 20rpx;
   border-radius: 24rpx;
@@ -156,6 +262,12 @@
   gap: 14rpx;
 }
 
+.resource-actions {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
 .resource-title {
   flex: 1;
   font-size: 30rpx;
@@ -171,6 +283,19 @@
   border-radius: 999rpx;
   background: var(--surface-soft);
   color: var(--theme);
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-tag {
+  min-width: 88rpx;
+  height: 46rpx;
+  padding: 0 14rpx;
+  border-radius: 999rpx;
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
   font-size: 22rpx;
   display: flex;
   align-items: center;

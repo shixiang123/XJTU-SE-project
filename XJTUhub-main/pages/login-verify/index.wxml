@@ -25,7 +25,8 @@
       <view class="form-item">
         <text class="field-icon cuIcon-lock"></text>
         <input
-          type="password"
+          type="text"
+          password="{{true}}"
           value="{{password}}"
           bindinput="onPasswordInput"
           placeholder="请输入密码"

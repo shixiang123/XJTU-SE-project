@@ -8,6 +8,17 @@ page {
   padding: 0 20rpx;
 }
 
+.loading-tip {
+  margin-bottom: 12rpx;
+  padding: 16rpx 18rpx;
+  border-radius: 14rpx;
+  border: 1rpx solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--theme);
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
 .refresh-btn {
   width: 58rpx;
   height: 58rpx;

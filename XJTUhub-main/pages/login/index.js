@@ -1,4 +1,6 @@
-import { loginRequest, triggerXjtuCrawlerRequest } from "../../api/main"
+import {
+  loginRequest
+} from "../../api/main"
 import { redirectAfterLogin } from "../../utils/auth"
 
 const app = getApp()
@@ -10,19 +12,19 @@ Page({
     saveCount: true,
     redirect: "",
     themeMode: "light",
-    pageReady: false,
+    pageReady: false
   },
 
   onLoad(options) {
     this.setData({
-      redirect: options.redirect ? decodeURIComponent(options.redirect) : "",
+      redirect: options.redirect ? decodeURIComponent(options.redirect) : ""
     })
     this.initAccount()
   },
 
   onShow() {
     this.setData({
-      themeMode: app.getThemeMode(),
+      themeMode: app.getThemeMode()
     })
     this.runPageEnterAnimation()
   },
@@ -43,99 +45,93 @@ Page({
     const accountCache = wx.getStorageSync("account")
     if (accountCache) {
       this.setData({
-        ...accountCache,
+        ...accountCache
       })
     }
   },
 
   onStuIdInput(e) {
     this.setData({
-      stuId: e.detail.value || "",
+      stuId: e.detail.value || ""
     })
   },
 
   onPasswordInput(e) {
     this.setData({
-      password: e.detail.value || "",
+      password: e.detail.value || ""
     })
   },
 
-  login() {
+  showSyncLoading(title = "同步中...") {
+    wx.showLoading({
+      title,
+      mask: true
+    })
+  },
+
+  hideSyncLoading() {
+    wx.hideLoading()
+  },
+
+  async login() {
     const stuId = String(this.data.stuId || "").trim()
     const password = String(this.data.password || "").trim()
     if (!stuId) {
       wx.showToast({
         title: "请输入学号",
-        icon: "none",
+        icon: "none"
       })
       return
     }
     if (!password) {
       wx.showToast({
         title: "请输入密码",
-        icon: "none",
+        icon: "none"
       })
       return
     }
 
     const postData = { stuId, password }
-    console.log("[login] submit", {
-      stuIdLen: stuId.length,
-      hasPassword: !!password,
-    })
+    this.showSyncLoading("登录中...")
 
-    wx.showLoading({
-      title: "登录中",
-    })
-
-    loginRequest(postData)
-      .then((res) => {
-        console.log("[login] response", {
-          code: res && res.code,
-          hasCookie: !!(res && res.data && res.data.cookie),
-        })
-        wx.hideLoading()
-        if (res.code == -1) {
-          wx.showToast({
-            title: res.msg,
-            icon: "none",
-          })
-          return
-        }
-
-        wx.setStorageSync("token", res.data.cookie)
-        if (this.data.saveCount) {
-          wx.setStorageSync("account", postData)
-        } else {
-          wx.removeStorageSync("account")
-        }
-
-        triggerXjtuCrawlerRequest(postData).catch((err) => {
-          console.warn("[login] trigger crawler failed", err)
-        })
-
+    try {
+      const res = await loginRequest(postData)
+      if (res.code == -1) {
+        this.hideSyncLoading()
         wx.showToast({
-          title: "登录成功",
-          icon: "none",
+          title: res.msg,
+          icon: "none"
         })
+        return
+      }
 
-        setTimeout(() => {
-          redirectAfterLogin(this.data.redirect)
-        }, 1500)
+      wx.setStorageSync("token", res.data.cookie)
+      if (this.data.saveCount) {
+        wx.setStorageSync("account", postData)
+      } else {
+        wx.removeStorageSync("account")
+      }
+      this.hideSyncLoading()
+
+      wx.showToast({
+        title: "登录成功",
+        icon: "none"
       })
-      .catch((err) => {
-        console.error("[login] request failed", err)
-        wx.hideLoading()
-        wx.showToast({
-          title: `登录失败: ${err && err.message ? err.message : "UNKNOWN_ERROR"}`,
-          icon: "none",
-        })
+      setTimeout(() => {
+        redirectAfterLogin(this.data.redirect)
+      }, 500)
+    } catch (err) {
+      this.hideSyncLoading()
+      wx.showToast({
+        title: `登录失败: ${err && err.message ? err.message : "UNKNOWN_ERROR"}`,
+        icon: "none"
       })
+    }
   },
 
   switchStatus() {
     this.setData({
-      saveCount: !this.data.saveCount,
+      saveCount: !this.data.saveCount
     })
   },
 
@@ -146,7 +142,7 @@ Page({
       return
     }
     wx.switchTab({
-      url: "/pages/index/index",
+      url: "/pages/index/index"
     })
-  },
+  }
 })
