@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="XJTUhub: A campus learning assistant mini-program with real-time backend crawling for courses, scores, attendance and deadlines.">
+  <meta name="keywords" content="XJTU, WeChat Mini Program, Campus Assistant, Course Schedule, Score, Attendance, DDL">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XJTUhub: Campus Learning Assistant for XJTU</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="#overview">Overview</a>
+      <a class="navbar-item" href="#features">Features</a>
+      <a class="navbar-item" href="#architecture">Architecture</a>
+      <a class="navbar-item" href="#implementation">Implementation</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero hero-gradient">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">XJTUhub: Campus Learning Assistant for XJTU</h1>
+          <p class="subtitle is-5" style="margin-top: 0.8rem;">
+            A WeChat Mini Program + Node.js backend system for schedule, score, attendance, resource browsing, and DDL support.
+          </p>
+
+          <div class="is-size-5 publication-authors" style="margin-top: 1rem;">
+            <span class="author-block">Zhiyuan Jiang,</span>
+            <span class="author-block">SE Project Team</span>
+          </div>
+
+          <div class="is-size-6" style="margin-top: 0.4rem; color: #5a5a5a;">
+            Xi'an Jiaotong University · Software Engineering Project
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/shixiang123/XJTU-SE-project" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Project Repo</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/shixiang123/XJTU-SE-project/tree/final" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-code-branch"></i></span>
+                  <span>Final Branch</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#implementation" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-sitemap"></i></span>
+                  <span>System Details</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser" id="overview">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div class="teaser-grid">
+        <video autoplay muted loop playsinline controls>
+          <source src="./static/videos/demo1.mp4" type="video/mp4">
+        </video>
+        <video autoplay muted loop playsinline controls>
+          <source src="./static/videos/demo2.mp4" type="video/mp4">
+        </video>
+      </div>
+      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+        Top demos: mini-program workflow and integrated backend crawling pipeline.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 section-title">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            XJTUhub is an XJTU-oriented campus assistant system that combines a WeChat mini-program frontend and a Node.js backend service.
+            The frontend covers high-frequency student scenarios including login, weekly schedule, term score query, resource plaza, attendance panel,
+            and DDL management. The backend provides unified authentication and crawler-triggered data acquisition from eHall-related systems, then maps
+            heterogeneous raw data into stable API contracts for the mini-program. The project emphasizes practical usability, data-structure compatibility,
+            and maintainable school-provider extension for future multi-school support.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="features">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title">Core Features</h2>
+    <div class="columns is-multiline" style="margin-top: 1rem;">
+      <div class="column is-6">
+        <div class="feature-card">
+          <h3>Authentication</h3>
+          <ul>
+            <li>Student ID + password login</li>
+            <li>Captcha-based login initialization and verification</li>
+            <li>Token-based session handling with auto redirect on invalid auth</li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="feature-card">
+          <h3>Course Schedule</h3>
+          <ul>
+            <li>Weekly timetable rendering</li>
+            <li>Current-week auto calculation</li>
+            <li>Course detail pop-up (teacher, location, week range, sections, credit)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="feature-card">
+          <h3>Score Query</h3>
+          <ul>
+            <li>Term-based score list switching</li>
+            <li>Raw score breakdown (normal/midterm/final/composite)</li>
+            <li>Local cache + manual refresh</li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="feature-card">
+          <h3>Learning Assistant</h3>
+          <ul>
+            <li>Resource plaza with category filter and keyword search</li>
+            <li>Attendance and DDL modules (current local demo datasets)</li>
+            <li>Function aggregation page + customized TabBar UX</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="architecture">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title">System Architecture</h2>
+    <div class="columns" style="margin-top: 1rem;">
+      <div class="column is-6">
+        <div class="content pipeline">
+          <h4 class="title is-5">Frontend (XJTUhub-main)</h4>
+          <p>
+            Built on native WeChat mini-program framework with Vant Weapp and ColorUI.
+            It uses a unified request wrapper for token injection, error-code interpretation,
+            and login fallback. Main pages include login, index resources, course, score,
+            attendance, DDL, and mine.
+          </p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="content pipeline">
+          <h4 class="title is-5">Backend (XJTU-API-main)</h4>
+          <p>
+            Node.js service exposing stable REST endpoints for the mini-program.
+            It supports login token issuance, crawler trigger/status query, and mapped output
+            endpoints for courses and scores. Crawler outputs are normalized and persisted to
+            JSON artifacts for retrieval and debugging.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="implementation">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered section-title">Implementation Snapshot</h2>
+    <div class="content" style="margin-top: 1rem;">
+      <p><strong>Repository structure in final branch:</strong></p>
+      <ul>
+        <li><code>XJTUhub-main/</code>: WeChat mini-program frontend</li>
+        <li><code>XJTU-API-main/</code>: Node.js backend + crawler scripts</li>
+        <li><code>docs/backend-realtime-crawler-spec.md</code>: backend compatibility and extension specification</li>
+      </ul>
+
+      <p><strong>Current integrated API set:</strong></p>
+      <ul>
+        <li><code>POST /login</code>, <code>GET /login-init</code>, <code>POST /login-verify</code>, <code>GET /login-code</code></li>
+        <li><code>GET /courses</code>, <code>GET /scores</code>, <code>GET /raw-scores</code></li>
+        <li>Backend crawler-related: <code>POST /crawl/xjtu/trigger</code>, <code>GET /crawl/xjtu/status</code></li>
+      </ul>
+
+      <p><strong>Response contract:</strong> <code>{ code, msg, data }</code> with <code>code=0/-1/403</code> semantics for frontend compatibility.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container is-max-desktop">
+    <div class="content has-text-centered footer-note">
+      <p>
+        This page is adapted in the style of the Nerfies project website template.
+        Content is based on the <code>final</code> branch implementation of XJTU-SE-project.
+      </p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

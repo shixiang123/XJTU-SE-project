@@ -1,0 +1,82 @@
+body {
+  font-family: 'Noto Sans', sans-serif;
+  color: #102025;
+}
+
+.publication-title,
+.publication-authors,
+.section-title,
+.hero .subtitle {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.link-block a {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-authors a {
+  color: hsl(204, 86%, 43%) !important;
+}
+
+.publication-authors a:hover {
+  text-decoration: underline;
+}
+
+.hero-gradient {
+  background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+}
+
+.teaser-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.teaser-grid video {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e6edf5;
+  background: #000;
+}
+
+@media screen and (max-width: 768px) {
+  .teaser-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-card {
+  border: 1px solid #e9edf2;
+  border-radius: 12px;
+  padding: 1rem;
+  height: 100%;
+  background: #fff;
+}
+
+.feature-card h3 {
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.feature-card ul {
+  margin-left: 1rem;
+}
+
+.pipeline {
+  border-left: 3px solid #1b83d3;
+  padding-left: 1rem;
+}
+
+.section-soft {
+  background: #f7fafc;
+}
+
+.footer-note {
+  color: #4a4a4a;
+  font-size: 0.95rem;
+}
