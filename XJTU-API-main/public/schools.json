@@ -1,0 +1,11 @@
+{
+  "13558": {
+    "type": "qiangzhi",
+    "code": "13558",
+    "name": "XJTU",
+    "host": "njw.xjistedu.cn",
+    "domain": "njw.xjistedu.cn/jsxsd",
+    "needVerify": true,
+    "ssl": false
+  }
+}
